@@ -470,8 +470,14 @@ Only after the recruiter has seen the list and picked who they want.
 1. Give the credit estimate for the picked names and ask.
 2. `email_enrichment` in one batch (LinkedIn URL where you have it, else name plus firm domain).
    Keep only rows where `company_match` is true. **Work email only**, this is the buy side.
-3. Optional `enrichley_validate_email`, keep `valid` and `catch_all_safe`.
-4. Mobile only if asked: `aiark_mobile_phone_finder`.
+3. **Fallback for the misses: `aiark_find_emails`**, one person per call, with the person's
+   `linkedin_url`. Only for rows step 2 could not fill and that have a LinkedIn URL. Read
+   `result.email.output[0]` and nothing else: keep the `address` when `status` is `VALID` and the
+   domain is the firm's own. `error_code: "NOT_FOUND"` is a miss. Cap this step at five people per
+   run, because each response carries the whole profile. See `reference/hyreflow.md`.
+4. Optional `enrichley_validate_email`, keep `valid` and `catch_all_safe`. Do run it on any address
+   whose `domainType` came back `CATCH_ALL`.
+5. Mobile only if asked: `aiark_mobile_phone_finder`.
 
 Never invent an email address and never construct a LinkedIn URL. No details found, mark "needs
 contact details".

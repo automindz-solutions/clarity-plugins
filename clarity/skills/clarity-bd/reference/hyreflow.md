@@ -82,6 +82,7 @@ names they actually want.
 | Web search | `serper_search`, `serper_news` | 0.1 per request, whatever `num` you ask for |
 | Read a page, including JS-rendered | `firecrawl_scrape` | 0.1 |
 | Work email | `email_enrichment` | billed at the rate of the provider that finds it: Prospeo 0.4, FullEnrich 1.3, Lusha 2.9, Wiza 1.0, tried in that order (7 Oct 2026) |
+| Work email, fallback for the misses | `aiark_find_emails` | 0.034 per lookup, one person per call |
 | Email check | `enrichley_validate_email` | 0.25 |
 | Mobile | `aiark_mobile_phone_finder` | about 0.33 |
 
@@ -198,6 +199,16 @@ company, title, start, end and `is_current`, newest first. Enrich each person on
   100 rows. Billed on a hit only. Check `company_match`: an email at a different company is a stale
   record, do not use it.
 - A row that comes back `still_enriching` carries a `job_id`. **Resume it, never resend.**
+- **`aiark_find_emails` is the fallback after the waterfall, not a replacement for it.** Payload
+  `{"linkedin_url": "<profile url>"}`, one person per call, work emails only, 0.034 credits. AI Ark
+  is not one of the waterfall's providers, so it can find people the waterfall missed. Tested on
+  7 Oct 2026 on five healthcare staffing leaders: four found, all `VALID` and on the firm's own
+  domain, one `NOT_FOUND`. The miss was billed 0.034 as well.
+  - The email sits at `result.email.output[0]`: `address`, `status`, `domainType`.
+  - The response is the person's full profile, 15 to 25 KB each, and there is no way to ask for
+    the email alone. That is why it runs last and on a handful of people. Do not quote or
+    summarise the rest of the response.
+  - It has no `company_match` flag. Compare the address domain with the firm's domain yourself.
 - `enrichley_validate_email`: keep `valid` and `catch_all_safe`, drop `undeliverable` and
   `catch_all_not_safe`.
 - **Client side uses work email.** These skills approach agency leaders as buyers, so work email is
