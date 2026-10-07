@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}} · Clarity R2R</title>
+<style>
+{{FONT_FACES}}
+
+:root{
+  --bg:#111111;
+  --gold:#FFC500;
+  --text:#F0F0F0;
+  --muted:#8A8A8A;
+  --box:#1C1C1C;
+  --border:#525252;
+  --gold-box:#251C05;
+  --gold-border:#9E7B0D;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+@page{ size:A4; margin:0; }
+
+html,body{ background:var(--bg); }
+
+body{
+  font-family:'Poppins', 'Segoe UI', Arial, sans-serif;
+  color:var(--text);
+  font-size:11.3px;
+  line-height:1.5;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+/* Blocks are authored into #source, then the script below packs them into A4 pages. */
+#source{ width:210mm; padding:0 16mm; }
+
+.page{
+  width:210mm;
+  height:297mm;
+  overflow:hidden;
+  background:var(--bg);
+  padding:10mm 16mm 8mm;
+  display:flex;
+  flex-direction:column;
+  page-break-after:always;
+  break-after:page;
+}
+.page:last-child{ page-break-after:auto; break-after:auto; }
+
+.logo{ display:block; flex:0 0 auto; align-self:center; width:112px; aspect-ratio:333/101; }   /* fixed ratio: layout must not wait for the image to decode */
+.page.first .logo{ width:186px; }
+.body{ flex:1 1 0; min-height:0; overflow:hidden; padding-top:5mm; }
+.page.first .body{ padding-top:8mm; }
+
+.block{ margin-bottom:5mm; }
+.body > .block:last-child{ margin-bottom:0; }
+
+/* ---- Opening ---- */
+.intro{
+  text-align:center;
+  font-size:1.2em;
+  line-height:1.55;
+  padding:0 4mm;
+}
+.intro .hello{ color:var(--gold); font-weight:600; }
+
+/* ---- Comparison table ---- */
+table.compare{
+  width:100%;
+  border-collapse:collapse;
+  border:1px solid var(--border);
+  background:var(--box);
+  font-size:0.95em;
+}
+table.compare th{
+  text-align:left;
+  color:var(--gold);
+  font-weight:600;
+  background:var(--gold-box);
+  border-bottom:1px solid var(--gold-border);
+  padding:2.6mm 2.4mm;
+}
+table.compare td{
+  vertical-align:top;
+  padding:2.6mm 2.4mm;
+  border-top:1px solid var(--border);
+  line-height:1.4;
+}
+table.compare td.biz{ font-weight:700; width:17%; }
+table.compare td:nth-child(2){ width:21%; }
+table.compare td:nth-child(3){ width:18%; }
+table.compare td:nth-child(4){ width:23%; }
+
+/* ---- Company card ---- */
+.card{
+  background:var(--box);
+  border:1px solid var(--border);
+  padding:4.2mm 5.5mm 4.2mm;
+}
+.card h2{ color:var(--gold); font-weight:700; font-size:2em; line-height:1.15; }
+.card .descriptor{ font-weight:600; margin-top:1mm; }
+.card .descriptor .url{ color:var(--gold); }
+.card .locations{
+  color:var(--gold);
+  font-weight:600;
+  font-size:0.8em;
+  letter-spacing:.03em;
+  margin-top:1mm;
+}
+.card .pitch{ font-size:1.13em; line-height:1.45; margin-top:2mm; }
+.card ul{ list-style:none; margin-top:2.6mm; }
+.card li{ position:relative; padding-left:4.2mm; margin-bottom:1.5mm; line-height:1.42; }
+.card li:last-child{ margin-bottom:0; }
+.card li::before{
+  content:"";
+  position:absolute;
+  left:0.6mm;
+  top:0.62em;
+  width:1.2mm;
+  height:1.2mm;
+  border-radius:50%;
+  background:var(--text);
+}
+.card li b{ color:var(--gold); font-weight:600; }
+
+.fit{
+  margin-top:3mm;
+  background:var(--gold-box);
+  border:1px solid var(--gold-border);
+  padding:2.6mm 3.6mm;
+}
+.fit .label{
+  color:var(--gold);
+  font-weight:700;
+  font-size:0.82em;
+  letter-spacing:.04em;
+  margin-bottom:0.8mm;
+}
+.fit p{ line-height:1.45; }
+
+/* ---- Sources ---- */
+.sources{ color:var(--muted); font-size:0.78em; line-height:1.5; }
+
+/* ---- Footer ---- */
+.footer{
+  position:relative;
+  flex:0 0 auto;
+  padding-top:3mm;
+  text-align:center;
+  font-size:0.86em;
+  line-height:1.6;
+  color:var(--muted);
+}
+.footer .tag{ display:block; color:var(--gold); font-weight:600; }
+.footer .num{ position:absolute; right:0; bottom:0; font-size:0.85em; }
+</style>
+</head>
+<body>
+  <div id="source">
+{{BLOCKS}}
+  </div>
+
+  <template id="page-tpl">
+    <div class="page">
+      <img class="logo" src="{{LOGO_SRC}}" alt="Clarity R2R">
+      <div class="body"></div>
+      <div class="footer">
+        {{FOOTER_CONTACT}}
+        <span class="tag">{{TAGLINE}}</span>
+        <span class="num"></span>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    /* Pack blocks into A4 pages. A block (table, card, sources) never splits across pages. */
+    /* Wait for the embedded fonts first: measuring in the fallback font under-counts the height. */
+    function pack() {
+      var source = document.getElementById('source');
+      var blocks = Array.prototype.slice.call(source.children);
+      var tpl = document.getElementById('page-tpl');
+      var pages = [];
+
+      function newPage() {
+        var page = tpl.content.firstElementChild.cloneNode(true);
+        if (!pages.length) page.classList.add('first');
+        document.body.appendChild(page);
+        pages.push(page);
+        return page;
+      }
+      function overflows(page) {
+        var body = page.querySelector('.body');
+        var last = body.lastElementChild;
+        if (!last) return false;
+        /* compare real edges, and keep a little air above the footer */
+        return last.getBoundingClientRect().bottom > body.getBoundingClientRect().bottom - 4;
+      }
+
+      var page = newPage();
+      var oversize = [];
+      blocks.forEach(function (block) {
+        var body = page.querySelector('.body');
+        body.appendChild(block);
+        if (overflows(page) && body.children.length > 1) {
+          body.removeChild(block);
+          page = newPage();
+          body = page.querySelector('.body');
+          body.appendChild(block);
+        }
+        if (overflows(page)) oversize.push(block.getAttribute('data-name') || block.className);
+      });
+
+      source.remove();
+      pages.forEach(function (p, i) { p.querySelector('.num').textContent = String(i + 1); });
+      document.documentElement.setAttribute('data-pages', String(pages.length));
+      document.documentElement.setAttribute('data-oversize', oversize.join('|'));
+    }
+    document.fonts.ready.then(pack);
+  </script>
+</body>
+</html>

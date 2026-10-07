@@ -1,0 +1,15 @@
+{
+  "name": "clarity",
+  "description": "Clarity R2R's recruiting skills for Claude, kept in sync across the team.",
+  "owner": {
+    "name": "Clarity R2R"
+  },
+  "plugins": [
+    {
+      "name": "clarity",
+      "displayName": "Clarity R2R",
+      "source": "./clarity",
+      "description": "The Clarity R2R skills in one install: brief, shortlist, spec, market spec, frontsheet, options, BD, network and house style. Everyone on the team runs the same version."
+    }
+  ]
+}

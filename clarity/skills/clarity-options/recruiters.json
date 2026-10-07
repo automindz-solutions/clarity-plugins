@@ -1,0 +1,18 @@
+{
+  "james": {
+    "name": "James Ward",
+    "email": "james@clarityr2r.com",
+    "phone": "+1 786 796-5657"
+  },
+  "marcus": {
+    "name": "Marcus Davies",
+    "email": "marcus@clarityr2r.com",
+    "phone": "+1 786 673-4942"
+  },
+  "josh": {
+    "name": "Josh Haydock",
+    "email": "josh@clarityr2r.com",
+    "phone": "+1 786 563-4543"
+  },
+  "_note": "Recruiter is a required per-run input. 'billy' (Billy Greenall) is a known Clarity recruiter but his email/phone are TBD — collect on first use and add here. To add a recruiter, copy the shape: {name, email, phone}."
+}

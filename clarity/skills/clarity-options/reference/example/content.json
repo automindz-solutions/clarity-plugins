@@ -1,0 +1,103 @@
+{
+  "slug": "example-candidate-options",
+  "candidate": {"name": "Alex Morgan", "first_name": "Alex"},
+  "recruiter": {"name": "James Ward", "email": "james@clarityr2r.com", "phone": "+1 786 796-5657"},
+  "as_of": "6 October 2026",
+  "intro": "great to speak last week. Here are five specialist recruitment businesses worth a conversation, in the order I think they suit you. You lead learning and development for a life sciences staffing firm in the US, so each one is here because it puts real money and senior people behind L&D.",
+  "companies": [
+    {
+      "name": "Discover International",
+      "type": "Life Sciences Specialist",
+      "size": "125 globally, 48 in Miami",
+      "core_markets": "Pharma, biotech, medtech, CRO",
+      "standout": "100%+ year-on-year US growth",
+      "descriptor": "High-Growth Life Sciences Specialist",
+      "urls": ["discoverinternational.com"],
+      "locations": ["Miami", "Denver", "London", "Europe", "Mexico City"],
+      "pitch": "One of the fastest-growing life sciences recruiters in the world. It grew from 6 people in 2016 to about 125, and its US business has grown more than 100% year on year since launching in 2019.",
+      "bullets": [
+        {"label": "Learning and Development", "text": "A dedicated L&D department using internal experts and external specialist trainers. Sector training covers drug development, device regulation and clinical trials, with conference access and certification support."},
+        {"label": "Pure Life Sciences Focus", "text": "Pharma, biotech, medtech, CRO/CDMO and digital health, across direct hire, contract and executive search."},
+        {"label": "US Hub in Miami", "text": "48 people in Brickell, plus a newer office in Denver."},
+        {"label": "Fast-Track Progression", "text": "A merit-based culture with a published path from Consultant to Director, and multiple million-dollar billers."},
+        {"label": "Strong Earnings", "text": "Top-band performers earn 40% commission, and senior team members can take equity."}
+      ],
+      "fit": "The closest match to what you do now. It is a pure life sciences staffing business, so the sector training you have built your career on carries straight over, and a US team doubling each year needs its L&D to keep pace."
+    },
+    {
+      "name": "LHi Group",
+      "type": "Employee-Owned Multi-Brand Group",
+      "size": "450 globally, 200 in the US",
+      "core_markets": "Tech, life sciences, clean energy, built environment",
+      "standout": "Six-figure stake for every employee",
+      "urls": ["wearelhi.com"],
+      "locations": ["London", "New York", "Miami", "Austin", "Los Angeles", "Europe"],
+      "pitch": "Around 80% of LHi sits in an Employee Ownership Trust, so every employee, now and in the future, holds a six-figure stake. The group has grown 60% year on year for five years.",
+      "bullets": [
+        {"label": "Learning and Development", "text": "Dedicated Heads of L&D for the US and for UK & Europe, an L&D partner team, and an Executive Director working full time as the group's 'Future You' coach."},
+        {"label": "Leaders Grown From Within", "text": "Half the board started as graduates or in their first recruitment role. Co-CEOs Michael Bott and Ben Richardson both built US offices from scratch."},
+        {"label": "Five Non-Competing Brands", "text": "Lawrence Harvey (tech), SciPro (life sciences), Piper Maddox (clean energy), Harper Harrison (built environment) and XPS (project solutions). Room to move markets without leaving the group."},
+        {"label": "Global Reach", "text": "450 staff, 200 of them in the US, across London, Bristol, Munich, Berlin, New York, Miami, Austin and Los Angeles."},
+        {"label": "Culture With Proof", "text": "Named #1 best recruitment company to work for in London (Best Companies) and Great Place to Work certified."}
+      ],
+      "fit": "L&D here is a leadership function with seats on both sides of the Atlantic, the same UK and US span you cover in your current role. SciPro keeps you in life sciences, with four other brands to stretch into."
+    },
+    {
+      "name": "Metric Search",
+      "type": "PE-Backed Specialist Search",
+      "size": "130+ consultants, 7 offices",
+      "core_markets": "Data centres, life sciences, infrastructure, C-suite",
+      "standout": "$100m valuation, FT1000 2025 and 2026",
+      "descriptor": "PE-Backed Specialist Executive Search",
+      "urls": ["metric-search.com"],
+      "locations": ["New York", "Fort Lauderdale", "Austin", "San Diego", "UK"],
+      "pitch": "In March 2026, Southfield Capital took a majority stake at a $100m valuation, seven years after Metric was founded in New York. It made the FT1000 fastest-growing list in 2025 and 2026.",
+      "bullets": [
+        {"label": "Learning and Development", "text": "The Metric Academy, a two-week immersive programme with the 'Amplify' learning platform and 1:1 coaching. A global L&D team led by a Group Director of Talent & Performance and a Head of Sales Enablement."},
+        {"label": "Four Specialist Brands", "text": "Metric Geo (infrastructure), Metric DCX (data centres), Metric Bio (life sciences and medtech) and Metric Exec (C-suite and PE-backed search). Mostly retained mandates."},
+        {"label": "Leaders Who Bill", "text": "Founder and CEO Joe Jani and the whole senior team still bill. Relocation from UK to US is well trodden."},
+        {"label": "High Productivity", "text": "Average billings of about £500k per head, with several million-dollar billers."},
+        {"label": "Pay for Performance", "text": "Uncapped commission of up to 60%, accelerators for top performers and a clear path to equity."}
+      ],
+      "fit": "Fresh private equity money means headcount growth, and the Metric Academy is how they plan to absorb it. Like you, plenty of their people have made the move from the UK to the US, and Metric Bio keeps a life sciences line in the mix."
+    },
+    {
+      "name": "SThree",
+      "type": "Global STEM Staffing Group",
+      "size": "300 in the US",
+      "core_markets": "Tech, engineering, life sciences",
+      "standout": "US net fees +12% in H1 2026",
+      "urls": ["sthree.com", "specialiststaffinggroup.com"],
+      "locations": ["New York", "Boston", "Chicago", "Houston", "Austin", "California"],
+      "pitch": "A London-listed STEM staffing group whose US business is its growth engine. US net fees rose 12% in the half to 31 May 2026, and US contract fees rose 14%.",
+      "bullets": [
+        {"label": "Learning and Development", "text": "Heavy investment in internal and external L&D, backed by a new technology platform that is driving productivity per head. Plenty of room to move up across the group."},
+        {"label": "Growth Markets", "text": "Strong demand for engineering and tech skills tied to power generation and AI. The US is the group's largest life sciences market and returned to growth in Q2 2026."},
+        {"label": "Well-Known US Brands", "text": "Computer Futures, Huxley, Progressive and Real Staffing, with about 300 people in the US."},
+        {"label": "Scale and Stability", "text": "A global group with a very strong contract business, trading in the US as Specialist Staffing Group."},
+        {"label": "Benefits", "text": "A hybrid week of 3 days in the office and 2 at home, strong healthcare and a 401K."}
+      ],
+      "fit": "The largest platform on this list. L&D here reaches about 300 people across four brands in the US, with a new technology platform behind it, and life sciences is the group's biggest US market."
+    },
+    {
+      "name": "GQR",
+      "type": "Global Talent Firm",
+      "size": "250",
+      "core_markets": "Healthcare, life sciences, tech",
+      "standout": "$420k average billings per head",
+      "descriptor": "High-Growth Global Talent Firm",
+      "urls": ["gqr.com"],
+      "locations": ["New York", "Austin", "London", "Sydney", "Remote"],
+      "pitch": "Among the strongest per-head numbers in the market. US billings average $420k per head, trainees included. Last year 30 people billed over $1m, and the top biller did $5m.",
+      "bullets": [
+        {"label": "Learning and Development", "text": "Calls developing its people 'the cornerstone of our business'. It runs dedicated Talent Acquisition and L&D teams, a blended training, coaching and feedback model, and external learning pathways."},
+        {"label": "Growth Track Record", "text": "Founded in 2009, with revenue up an average of 70% a year and a team now about 250 strong."},
+        {"label": "Backed for Growth", "text": "A $50m investment to speed up the next phase, plus profit sharing and equity participation for its people."},
+        {"label": "Flexibility", "text": "Remote and hybrid working, relocation and visa support, and a full benefits package with a 401k."},
+        {"label": "Pay for Performance", "text": "Commission of up to 30% at the top end."}
+      ],
+      "fit": "Billings of $420k a head with trainees included says the training works, and that is the result an L&D leader gets judged on. Healthcare and life sciences are core markets, and remote working is on offer."
+    }
+  ],
+  "sources": "wearelhi.com; metric-search.com/careers; Hunt Scanlon Media, 27 March 2026; discoverinternational.com/about/work-for-us; Staffing Industry Analysts, 16 June 2026; gqr.com/work-for-us"
+}

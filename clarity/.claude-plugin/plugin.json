@@ -1,0 +1,8 @@
+{
+  "name": "clarity",
+  "version": "1.0.0",
+  "description": "The Clarity R2R skills for Claude: brief, shortlist, spec, market spec, frontsheet, options, BD, network and house style.",
+  "author": {
+    "name": "Automindz Solutions"
+  }
+}

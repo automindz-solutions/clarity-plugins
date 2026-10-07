@@ -1,0 +1,95 @@
+{
+  "_comment": "Capability -> MCP tool map for clarity-network. First run: discover once, write the names back here, then bind directly on every later run. Kondo names are verified against a live account; Loxo names are unresolved because no workspace this skill has run in has Loxo connected at all.",
+  "rate_limit": "Kondo's LinkedIn-backed tools (load_chat, list_connections, set_chat_archived, set_chat_label, set_chat_reminder) allow ONE call every 2 seconds and must be sequential — parallel calls fail with -32000. load_chat takes one thread per call, so a 30-thread shortlist costs ~90s. list_inbox and read_chat are local and unrestricted.",
+  "resolution_rule": "Name present -> call it directly, no discovery. Name null -> discover among connected MCPs, use it, write it back. required:true unresolvable -> STOP and name the missing capability. Never substitute a broader tool.",
+  "capabilities": {
+    "kondo_list_chats": {
+      "required": false,
+      "purpose": "keyword search across threads. NOT the list-building tool — use kondo_list_inbox for that.",
+      "expected_tool": "list_chats",
+      "resolved": "Kondo:list_chats",
+      "verified": "2026-09-01 — works for phrase search, unreliable for names",
+      "note": "NAME MATCHING IS BROKEN. Searching a person's full name returns matchType:'text' hits that do not contain the name at all, and linkedin:true returned nothing for a person whose thread was position 1 of list_inbox. Never conclude 'no thread exists' from a miss here, and never present its results as matches for the name asked for. Search a distinctive phrase instead, or page list_inbox and match on threadParticipantUrns."
+    },
+    "kondo_read_chat": {
+      "required": true,
+      "purpose": "message history for threads ALREADY held locally by Kondo. Batches — takes an array of threads in one call.",
+      "expected_tool": "read_chat",
+      "resolved": "Kondo:read_chat",
+      "verified": "2026-09-01 — confirmed working on Frederik's account",
+      "note": "NOT sufficient on its own. Returns participants but an EMPTY messages array for any thread not recently opened in Kondo. Always call kondo_load_chat on the thread first. See Phase 2."
+    },
+    "kondo_load_chat": {
+      "required": true,
+      "purpose": "fetch a thread's history from LinkedIn so read_chat can then return it",
+      "expected_tool": "load_chat",
+      "resolved": "Kondo:load_chat",
+      "verified": "2026-09-01 — a thread that read_chat reported as empty returned 12 messages after load_chat",
+      "note": "Two-step and one thread per call: load_chat returns only a message COUNT, never the messages. Must be followed by read_chat. Expensive — it paginates the LinkedIn API — so call it only for threads inside the Phase 5 shortlist, never for the whole window."
+    },
+    "browser_navigate": {
+      "required": false,
+      "purpose": "open https://app.trykondo.com/settings/mcp during the Phase -2 preflight when Kondo is unreachable, so the recruiter sees connection state and a Kondo tab is open",
+      "expected_tool": "navigate",
+      "resolved": "claude-in-chrome:navigate",
+      "verified": "2026-09-01 — opened the page and returned the tab id; page shows a live status line and an Authorized applications list",
+      "note": "Optional: absent in most recruiter workspaces, in which case Phase -2 gives the URL as text instead. Do NOT close the tab afterwards — browser tools that clean up their own tabs will close the one the sweep needs."
+    },
+    "kondo_list_inbox": {
+      "required": true,
+      "purpose": "the thread list. view:'AWAITING_REPLY' + before:<cutoff ms> IS the Phase 3 query, computed server-side.",
+      "expected_tool": "list_inbox",
+      "resolved": "Kondo:list_inbox",
+      "verified": "2026-09-01 — returned 250+ threads for a 90-day window",
+      "note": "AWAITING_REPLY = I sent last, waiting for them. NEEDS_MY_REPLY is the inverse and is NOT what this skill wants (see ranking.md on inbound pitches)."
+    },
+    "kondo_set_draft": {
+      "required": false,
+      "purpose": "write a prepared reply into a thread — DOES NOT SEND",
+      "expected_tool": "set_chat_draft",
+      "resolved": null,
+      "note": "Approval-gated, interactive runs only. Kondo exposes no send tool at all."
+    },
+    "kondo_list_connections": {
+      "required": false,
+      "purpose": "connection graph — OFF by default, James stood this down on 4 Aug",
+      "expected_tool": "list_connections",
+      "resolved": null
+    },
+    "loxo_find_person": {
+      "required": true,
+      "purpose": "resolve a person by linkedin_url first (77.5% coverage), then name + company",
+      "expected_tool": "unknown — resolve in place",
+      "resolved": null,
+      "note": "Server registered as `loxo` at https://app.loxo.co/api/clarity-r2r/mcp. Data-tool names have never been observed — clarity-frontsheet guesses people_index / people_show but that is a GUESS. James's workspace exposes the real names."
+    },
+    "loxo_person_notes": {
+      "required": true,
+      "purpose": "call notes and activity — history and the booked-call backtrack",
+      "expected_tool": "unknown — resolve in place",
+      "resolved": null
+    },
+    "loxo_company_activity": {
+      "required": true,
+      "purpose": "company notes — placements, terms, interviews. Drives the existing-client guard.",
+      "expected_tool": "unknown — resolve in place",
+      "resolved": null,
+      "note": "Without this the client guard is SILENTLY disabled and the output still looks complete. Never run the sweep without it — say it is missing."
+    },
+    "loxo_add_note": {
+      "required": false,
+      "purpose": "append a LinkedIn activity note. The only write this skill makes.",
+      "expected_tool": "unknown — resolve in place",
+      "resolved": null,
+      "note": "Must append a note and nothing else. If the only available Loxo write also attaches to jobs or changes status, STOP and ask — do not use the broader tool and simply omit fields."
+    },
+    "notion_fetch_page": {
+      "required": false,
+      "purpose": "fetch the two pinned pages in notion-sources.json",
+      "expected_tool": "notion-fetch",
+      "resolved": "mcp__notion__notion-fetch",
+      "verified": "2026-08-18 — confirmed working",
+      "usage": "pass page_id as `id`. If unavailable, fall back to reference/ranking.md and say so."
+    }
+  }
+}

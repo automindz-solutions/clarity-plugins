@@ -1,0 +1,32 @@
+{
+  "_comment": "Notion pages this skill reads, pinned by ID. Content is fetched live at run time via the Notion MCP, so an edit in Notion reaches the next run with no change here. Only two pages matter to this skill — the rest of Clarity's Notion is irrelevant to a network sweep.",
+
+  "usage": "Fetch by page_id with the Notion MCP (notion-fetch, passing page_id as `id`). NEVER search by title — Clarity's workspace holds older duplicates under identical titles, and binding to a stale copy looks like a working run. If a pinned fetch fails, say so and fall back to reference/ranking.md; do not search.",
+
+  "pages": {
+    "referrals": {
+      "page_id": "25c783a9-8b8d-80c6-bfe5-eeacde2ed501",
+      "title": "Referrals (Training Deck)",
+      "used_for": "Gold / Silver / Bronze criteria, the rule that the tier lives in Loxo's `source` field, and the verbatim referral-ask scripts used for openers",
+      "fallback": "reference/ranking.md",
+      "verified": "2026-08-18",
+      "page_last_edited": "2025-08-27"
+    },
+    "gtm_day_plan": {
+      "page_id": "d7f04041-75c1-46cf-9888-a4acc8a5e210",
+      "title": "Clarity GTM (How to Source Clients & Candidates)",
+      "used_for": "the Top 300 Ecosystem definition (100 clients / 100 candidates / 100 managers) and the weekly day-plan slots this skill schedules against",
+      "fallback": "reference/ranking.md",
+      "verified": "2026-08-18",
+      "page_last_edited": "2026-07-13"
+    }
+  },
+
+  "_do_not_bind": {
+    "_comment": "Older duplicates under the same titles elsewhere in the workspace. Listed so they can be recognised and refused if a search ever happens by accident.",
+    "Candidate Qualification Call (old)": "228e76cf-10d9-4608-be7f-d9b8d1c04597 — 2024-09-15",
+    "Client Qualification Call (old)": "7cfdcc89-c8a4-405c-a20a-034f1b91855f — 2024-09-15"
+  },
+
+  "_shared_layer": "If clarity-context is installed, its notion-map.json is the fuller map across all Clarity skills and wins over this file. This copy exists so clarity-network runs standalone."
+}

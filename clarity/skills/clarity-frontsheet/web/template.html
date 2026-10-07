@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}} — Clarity R2R</title>
+<style>
+{{FONT_FACES}}
+
+:root{
+  --bg:#111111;
+  --gold:#F8C000;
+  --text:#F0F0F0;
+  --muted:#8A8A8A;
+  --scale:1;             /* auto-fit shrinks this until content fits one A4 page */
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+@page{ size:A4; margin:0; }
+
+html,body{ background:var(--bg); }
+
+body{
+  font-family:'Poppins', 'Segoe UI', Arial, sans-serif;
+  color:var(--text);
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+.page{
+  width:210mm;
+  height:297mm;              /* exactly one A4 page */
+  overflow:hidden;           /* safety net: auto-fit keeps content inside, this guarantees no page 2 */
+  background:var(--bg);
+  padding:20mm 20mm 12mm;
+  display:flex;
+  flex-direction:column;
+  /* base font size; em-based children scale together via --scale */
+  font-size:calc(13.5px * var(--scale));
+}
+
+/* ---- Header ---- */
+.logo{
+  display:block;
+  width:calc(275px * var(--scale));
+  margin:0 auto 1.4em;
+}
+.title{
+  font-weight:700;
+  font-size:1.72em;
+  line-height:1.2;
+  color:var(--gold);
+  text-align:center;
+  letter-spacing:.2px;
+}
+.role{
+  font-weight:600;
+  font-size:1.02em;
+  color:var(--text);
+  text-align:center;
+  margin-top:0.35em;
+}
+.subtitle{
+  font-weight:400;
+  font-size:0.93em;
+  color:var(--muted);
+  text-align:center;
+  margin-top:0.5em;
+  letter-spacing:.3px;
+}
+
+/* ---- Bullet lists ---- */
+.list{
+  list-style:none;
+  margin:1.7em 0 0;
+}
+.list li{
+  position:relative;
+  padding-left:1.5em;
+  margin-bottom:1.25em;
+  font-size:1em;
+  line-height:1.45;
+  color:var(--text);
+  font-weight:400;
+}
+.list li::before{
+  content:"";
+  position:absolute;
+  left:0.15em;
+  top:0.6em;
+  width:0.38em;
+  height:0.38em;
+  border-radius:50%;
+  background:var(--gold);
+}
+
+/* ---- Section heading ---- */
+.section-heading{
+  font-weight:700;
+  font-size:1.04em;
+  color:var(--gold);
+  letter-spacing:.6px;
+  margin:1.7em 0 0.3em;
+  padding-bottom:0.6em;
+  border-bottom:1px solid var(--gold);
+}
+
+/* ---- Footer ---- */
+.footer{
+  margin-top:auto;
+  padding-top:1.8em;
+  text-align:center;
+  font-size:0.74em;
+  line-height:1.6;
+  color:var(--muted);
+}
+.footer a{ color:var(--muted); text-decoration:none; }
+.footer .tag{ color:var(--gold); font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <img class="logo" src="{{LOGO_SRC}}" alt="Clarity R2R">
+
+    <h1 class="title">{{TITLE}}</h1>
+    {{ROLE_BLOCK}}
+    {{SUBTITLE_BLOCK}}
+
+    <ul class="list">
+      {{HIGHLIGHT_ITEMS}}
+    </ul>
+
+    <div class="section-heading">{{ACHIEVEMENTS_HEADING}}</div>
+
+    <ul class="list">
+      {{ACHIEVEMENT_ITEMS}}
+    </ul>
+
+    <div class="footer">
+      <a href="mailto:{{RECRUITER_EMAIL}}">{{RECRUITER_EMAIL}}</a> ·
+      <a href="tel:{{RECRUITER_PHONE_RAW}}">{{RECRUITER_PHONE}}</a> ·
+      Exclusively represented by Clarity R2R &nbsp; <span class="tag">{{TAGLINE}}</span>
+    </div>
+  </div>
+
+  <script>
+    /* Auto-fit: shrink --scale only if content overflows one A4 sheet (runs before Chrome prints). */
+    (function () {
+      var page = document.querySelector('.page');
+      // A4 height in CSS px, minus safety margin large enough to cover bottom padding
+      // (scrollHeight excludes bottom padding) so the pinned footer never clips.
+      var MAX = 297 * 96 / 25.4 - 56;
+      page.style.height = 'auto';              // measure TRUE content height (fixed height would peg it)
+      page.style.overflow = 'visible';
+      var scale = 1;
+      for (var i = 0; i < 60 && page.scrollHeight > MAX && scale > 0.55; i++) {
+        scale -= 0.02;
+        document.documentElement.style.setProperty('--scale', scale.toFixed(3));
+      }
+      page.style.height = '297mm';             // restore exact one-page box (footer pinned to bottom)
+      page.style.overflow = 'hidden';
+    })();
+  </script>
+</body>
+</html>
