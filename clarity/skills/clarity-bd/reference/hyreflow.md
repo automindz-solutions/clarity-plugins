@@ -81,13 +81,14 @@ names they actually want.
 | "Who is the X at Y" | `exa_answer` | 0.1 per request |
 | Web search | `serper_search`, `serper_news` | 0.1 per request, whatever `num` you ask for |
 | Read a page, including JS-rendered | `firecrawl_scrape` | 0.1 |
-| Work email | `email_enrichment` | billed on a hit at the rate of the provider that found it. Rates seen 7 Oct 2026: 1.3 to 3.4. Quote with `dry_run: true` |
+| Work email | `email_enrichment` | billed at the rate of the provider that finds it: Prospeo 0.4, FullEnrich 1.3, Lusha 2.9, Wiza 1.0, tried in that order (7 Oct 2026) |
 | Email check | `enrichley_validate_email` | 0.25 |
 | Mobile | `aiark_mobile_phone_finder` | about 0.33 |
 
 Typical runs: **one spec run 10 to 30 credits, one BD run 15 to 40**, most of it contact enrichment.
-Email rates have risen since those ranges were measured, so price the contact step with a dry run
-before asking for the yes: ten emails can now cost up to 34 credits on their own.
+Most work emails land on the first provider at 0.4. Lusha's own listing shows 2.8 credits on a miss
+when called directly, while the waterfall says only hits are metered: read `_meta.credits_charged`
+after the first batch to see which applies.
 
 Measured on the 21 Sep 2026 test runs, before contact enrichment: **BD 2.4 credits**, **spec about 6**
 (two exploratory LinkedIn scrapes that the skill no longer uses cost 3.25 of that). A Lane 1 plus
