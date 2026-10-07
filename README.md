@@ -1,6 +1,6 @@
 # Clarity R2R plugin marketplace
 
-One install that gives every Clarity recruiter the same nine skills in Claude (Cowork, Desktop or
+One install that gives every Clarity recruiter the same ten skills in Claude (Cowork, Desktop or
 Code). It replaces uploading `.skill` files one by one.
 
 ## Install (each person, once)
@@ -16,14 +16,18 @@ The skills then appear when you type `/`:
 | Skill | Use it for |
 |---|---|
 | `clarity-brief` | Turn a role into a search-ready brief |
-| `clarity-shortlist` | Scored candidate shortlist for a Loxo job |
-| `clarity-spec` | Client contacts worth speccing a candidate to |
-| `clarity-market-spec` | Open-market firms to spec a candidate into |
+| `clarity-shortlist-loxo` | Scored candidate shortlist for a job, from Loxo |
+| `clarity-shortlist-market` | Candidates for a job from outside Loxo, LinkedIn only |
+| `clarity-spec-loxo` | Client contacts in Loxo worth speccing a candidate to |
+| `clarity-spec-market` | Open-market firms to spec a candidate into |
 | `clarity-frontsheet` | Branded one-page candidate cover sheet |
 | `clarity-options` | Options document for a candidate, with why each firm fits them |
-| `clarity-bd` | Net-new BD contacts from market signals |
+| `clarity-bd` | Net-new BD contacts from eight market signals |
 | `clarity-network` | Chase list from the LinkedIn inbox via Kondo |
 | `clarity-house-style` | Brand colours, type and capitalisation rules |
+
+**Loxo or market?** The `-loxo` skills search what Clarity already holds and cost nothing to run.
+The `-market` skills search outside it through Hyreflow and spend credits, always after asking.
 
 ## Connectors
 
@@ -36,7 +40,7 @@ Loxo, Hyreflow, Microsoft 365, Lemlist, Notion and Kondo (Kondo needs a plan wit
 .claude-plugin/marketplace.json   # marketplace manifest, one plugin: clarity
 clarity/
 ├── .claude-plugin/plugin.json    # plugin manifest and version
-└── skills/<9 skills>/SKILL.md
+└── skills/<10 skills>/SKILL.md
 ```
 
 ## Updating a skill

@@ -69,8 +69,7 @@ main words up, joining words down.
 
 `#FFC500` is the real brand yellow, sampled from the Clarity R2R wordmark artwork (core pixels
 average rgb(251, 198, 12)). **Older assets carry `#F8C000` — that value is wrong and duller; replace
-it on sight.** Known offender: `clarity-frontsheet/web/template.html`, which must be patched at
-render time (that skill documents how).
+it on sight.** `clarity-frontsheet` and `clarity-options` both ship the correct value.
 
 If a Canva brand kit is ever connected and states a different hex, that wins — update this file.
 

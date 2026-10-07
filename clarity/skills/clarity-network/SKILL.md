@@ -55,8 +55,8 @@ shortlist workflow changes — and James has already reworked it — nothing her
 |---|---|---|
 | **`sweep`** *(default)* | The ranked chase list. Everything below Phase 0. | a recruiter |
 | **`sync`** | Mirror the LinkedIn inbox into Loxo activity notes. | a schedule |
-| **`enrich`** | Given people, return their Kondo relationship state. | `clarity-shortlist`, `clarity-spec` |
-| **`source`** | Given criteria, return people from the recruiter's own inbox. | `clarity-shortlist` |
+| **`enrich`** | Given people, return their Kondo relationship state. | `clarity-shortlist-loxo`, `clarity-spec-loxo` |
+| **`source`** | Given criteria, return people from the recruiter's own inbox. | `clarity-shortlist-loxo` |
 
 **`sweep` and `sync` are independent, and conflating them is a bug.** The chase list is
 filtered — non-responders inside a window. The sync is **not**: James asked for *"all the
@@ -411,7 +411,7 @@ Then set two promotion flags per person:
 
 Kondo returns the LinkedIn profile for every conversation, and Loxo stores `linkedin_url` on
 the person record. Measured against Clarity's live database on 20 Aug 2026: **7,366 of 9,500
-people carry a LinkedIn slug — 77.5 % coverage.** `clarity-spec` already builds exactly this
+people carry a LinkedIn slug — 77.5 % coverage.** `clarity-spec-loxo` already builds exactly this
 index (`data/loxo_people_index.json`, keyed by slug → Loxo person id), so reuse it rather than
 rebuilding.
 
@@ -807,7 +807,7 @@ and walking a 550-thread backlog is not possible at all. This is the hard ceilin
 shortlist depth — raise the shortlist only within it, and never plan a mode that loads the
 whole window. `read_chat` is local, batches, and is not rate-limited; use it freely.
 
-*Still never executed:* `enrich` and `source` (the modes `clarity-shortlist` depends on) · the
+*Still never executed:* `enrich` and `source` (the modes `clarity-shortlist-loxo` depends on) · the
 entire `sync` path · `list_connections`.
 
 **Consistency:** runs 3 and 4 produced an identical ranked list. Runs 1 and 2 did not — each

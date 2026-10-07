@@ -1,11 +1,11 @@
 ---
-name: clarity-spec
+name: clarity-spec-loxo
 description: Build a list of client contacts worth speccing a Clarity R2R candidate to — the reverse of shortlisting. Given a strong candidate (Loxo person ID or name), it works out which client firms fit them and then, within each, which specific people are worth speccing to — ranked by whether they can hire, whether Clarity already has a relationship, and how to reach them. Read-only; produces a review list, does NOT write to Loxo, pitch, or send anything. Use whenever the user wants to find who to spec/float/market a candidate to — e.g. "who could I spec Stephen Carr to", "build a list of contacts for this candidate", "which clients would want this person and who do I talk to", "who should I float our LA engineering guy to".
 ---
 
-# Clarity Spec — candidate → contacts to spec to (CoWork / MCP build)
+# Clarity Spec Loxo — candidate → contacts to spec to, inside the database
 
-The mirror image of `clarity-shortlist`. That skill takes a job and finds candidates. This one takes
+The mirror image of `clarity-shortlist-loxo`. That skill takes a job and finds candidates. This one takes
 a **candidate** and builds a **list of client contacts worth speccing them to**.
 
 **Connectors only — no local scripts, no API keys, no cached company data.**
@@ -17,7 +17,7 @@ are separate, later, human-driven steps. Nothing here is outreach and nothing is
 ## Prerequisites
 
 - **Loxo MCP connected** (agency `clarity-r2r`). If unavailable, stop — never invent firms or contacts.
-- **AI Ark MCP connected** — only for the opt-in net-new step.
+- **Nothing else.** This skill spends no Hyreflow credits. The open market is `clarity-spec-market`.
 
 ## What it does, in two layers
 
@@ -139,25 +139,13 @@ have **no rostered contact** — those need sourcing, not speccing.
 **Warm ≠ willing.** A current-client flag and a warm contact are data, not consent. The list is input
 to the recruiter's judgement, not a green light.
 
-### 7. (Opt-in) Net-new — wider market beyond Loxo
+### 7. Firms and contacts outside Loxo
 
-Only if asked. Senior client-side leaders at staffing firms in the candidate's metro who are **not**
-already in Loxo:
+This skill stops at Loxo. For firms Clarity does not know yet, hand off to **`clarity-spec-market`**
+and pass it the candidate and the firms already listed here, so nothing appears twice. That skill
+maps the open market through Hyreflow and checks every firm against Loxo.
 
-```
-mcp__ai-ark__people_search(
-  companyIndustry: <staffing/recruiting — resolve via industry_search first>,
-  seniority: "owner,c_suite,vp,director,head,partner",
-  location: <metro>, title: <leadership titles>, size: 25)
-```
-
-- **Resolve enum values first** with `industry_search` / `location_search`. Never invent them.
-- **Dedup against Loxo** — search each result before showing it; drop anyone already in the CRM.
-- **Apply the step-3 exclusions again** — the candidate's own employers and firms already held must
-  not reappear here. This is the exact gap that let a candidate's own employer through in an earlier
-  build; do not skip it.
-- **Do NOT filter on `openToWork`.**
-- Review-only. Sources leads, writes nothing, sends nothing.
+**Do not search the market from here**, with AI Ark or any other connector.
 
 ### 8. Later, separate steps (NOT this skill)
 

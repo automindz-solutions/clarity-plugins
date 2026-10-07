@@ -58,5 +58,5 @@ Consequences:
   them as a candidate is poaching from your own client.
 - **Profile-strip / BD cadence** (not yet built) — the original context. Previous employers of
   a candidate go into a BD campaign *unless* they are already clients.
-- **clarity-spec** — which client firms a candidate can be marketed to. Inverse use: here an
+- **clarity-spec-loxo** — which client firms a candidate can be marketed to. Inverse use: here an
   existing relationship is the *good* signal.

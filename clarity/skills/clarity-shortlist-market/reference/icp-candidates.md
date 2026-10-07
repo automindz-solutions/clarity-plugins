@@ -191,5 +191,5 @@ politics that decide this are frequently not in the data.
 
 *Maintained by Automindz Solutions. Last updated 6 August 2026.*
 *Primary source: James Ward on the 4 August 2026 weekly call, plus the June 2026 ICP spec (AS-2112)
-and the shipped clarity-shortlist / clarity-spec skills. Conflicts between the June spec and the
+and the shipped clarity-shortlist-loxo / clarity-spec-loxo skills. Conflicts between the June spec and the
 August call are flagged above rather than silently resolved.*

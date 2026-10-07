@@ -4,9 +4,10 @@ Hyreflow is the data engine behind `clarity-bd` and `clarity-spec-market`. The t
 the interface stays Claude, Hyreflow runs underneath. It replaces the old mix of raw web search and
 the AI Ark connector, which could not express AI Ark's nested filters and returned wrong lists.
 
-Checked against the Hyreflow docs and tool descriptions on 21 Sep 2026. Where a value is marked
-**pilot**, the docs did not pin it down: run one small call and read what comes back before relying
-on it.
+First checked against the Hyreflow docs and tool descriptions on 21 Sep 2026, and rechecked on
+7 Oct 2026: the `people_search` inputs and its AI Ark-only fields, the LinkedIn scrape inputs, and
+the costs in the card below. Where a value is marked **pilot**, the docs did not pin it down: run
+one small call and read what comes back before relying on it.
 
 ---
 
@@ -20,6 +21,11 @@ on it.
 | `hyreflow_tools_execute` | Run a tool with its payload |
 | `hyreflow_dataset_read` | Re-read results you already paid for. **Never pay twice for the same data.** |
 | `hyreflow_billing_balance` | Credits left |
+
+**Names.** This file writes tools as one word, `aiark_people_search`. `hyreflow_tools_execute` takes
+them split: `tool: "aiark"`, `method: "people_search"`. Waterfalls such as `people_search`,
+`linkedin_profile` and `email_enrichment` have no method. Every response is `{_meta, result}`, so
+counts sit at `result.totalElements`, never at the top level.
 
 Rules Hyreflow itself imposes, follow them:
 
@@ -36,8 +42,8 @@ Rules Hyreflow itself imposes, follow them:
 
 ## The credit gate, once per run
 
-Every run of a Clarity skill costs Hyreflow credits (1 credit is about $0.10). Before the first paid
-call:
+Every run of a Clarity skill costs Hyreflow credits (1 credit is about USD 0.10). Before the first
+paid call:
 
 1. **Estimate** the run from the cost card below and the scope the recruiter confirmed.
 2. **Pilot** the most expensive step on one record if its shape is uncertain.
@@ -68,20 +74,28 @@ names they actually want.
 | Funding discovery | `predictleads_discover_financing_events` | 0.8 **per result**, cap it |
 | News discovery | `predictleads_discover_news_events` | 0.8 **per result**, cap it |
 | Similar companies | `predictleads_similar_companies` | **0.8 per result**, up to 20 by default. Set `limit` |
-| Company search | `aiark_company_search` | 0.01 per result |
+| Company search, including the headcount-growth filter | `aiark_company_search` | 0.01 per result |
+| People search with AI Ark's own filters | `aiark_people_search` | 0.05 per result, a `size: 1` count costs 0.05 |
 | People search | `people_search` (AI Ark first) | about 0.05 per person |
 | Employment history | `linkedin_profile` | 0.05 to 0.6 per person, a miss is free |
-| "Who is the X at Y" | `exa_answer` | 0 to 0.1 |
-| Web search | `serper_search`, `serper_news` | 0.1 |
+| "Who is the X at Y" | `exa_answer` | 0.1 per request |
+| Web search | `serper_search`, `serper_news` | 0.1 per request, whatever `num` you ask for |
 | Read a page, including JS-rendered | `firecrawl_scrape` | 0.1 |
-| Work email | `email_enrichment` | 0.4 to 2.9 per hit, a miss is free |
+| Work email | `email_enrichment` | billed at the rate of the provider that finds it: Prospeo 0.4, FullEnrich 1.3, Lusha 2.9, Wiza 1.0, tried in that order (7 Oct 2026) |
+| Work email, fallback for the misses | `aiark_find_emails` | 0.034 per lookup, one person per call |
+| Personal email, candidates only, after a yes | `personal_email` | quote with `dry_run: true`, costs more than work email |
+| A firm's recent LinkedIn posts | `hyreflow_native_get_company_posts` | 0.2 per request, up to 50 posts |
 | Email check | `enrichley_validate_email` | 0.25 |
 | Mobile | `aiark_mobile_phone_finder` | about 0.33 |
 
 Typical runs: **one spec run 10 to 30 credits, one BD run 15 to 40**, most of it contact enrichment.
+Most work emails land on the first provider at 0.4. Lusha's own listing shows 2.8 credits on a miss
+when called directly, while the waterfall says only hits are metered: read `_meta.credits_charged`
+after the first batch to see which applies.
 
 Measured on the 21 Sep 2026 test runs, before contact enrichment: **BD 2.4 credits**, **spec about 6**
-(two exploratory LinkedIn scrapes that the skill no longer uses cost 3.25 of that).
+(two exploratory LinkedIn scrapes that the skill no longer uses cost 3.25 of that). A `clarity-bd` Lane 1 plus
+Lane 3 count-only smoke test on a new vertical costs about **0.3**.
 
 ---
 
@@ -116,8 +130,25 @@ Measured on the 21 Sep 2026 test runs, before contact enrichment: **BD 2.4 credi
 Lever, Workday and Ashby. **Confirm the company's real domain before launching**, a guessed URL maps
 the wrong site. The poll `limit` is the only cost guard.
 
-For a single company, `predictleads_job_openings` with `identifier: <domain>`, `active_only: true` is
-usually cheaper (flat 0.8) and returns first-seen and last-seen dates.
+`predictleads_job_openings` is not a substitute for staffing firms: it held no data on two active
+healthcare agencies in testing and still billed 0.8 each.
+
+### AI Ark company search and headcount growth
+
+`aiark_company_search` takes `{account, page, size}`. Besides `industries`, `productAndServices`,
+`employeeSize` and `location`, it accepts department headcount metrics at `account.metric`:
+
+```json
+{"metric": {"growth": [{"function": ["human_resources"], "start": 15, "end": 500, "timeFrame": "SIX"}]}}
+```
+
+- `growth` is percent change in a department's headcount, `employee` is the absolute number.
+- `timeFrame`: `ONE`, `THREE`, `SIX`, `TWELVE`, `TWENTY_FOUR` (months).
+- `function` values that matter here: `human_resources` (an agency's recruiters sit here),
+  `sales`, `business_development`, `operations`.
+- The response carries no growth figure. Confirm with a joiner count, see `clarity-bd` Lane 2.
+- An unknown key or a wrong wrapper is ignored without an error and bills the unfiltered result.
+  Always check that `totalElements` drops.
 
 ### PredictLeads
 
@@ -170,6 +201,16 @@ company, title, start, end and `is_current`, newest first. Enrich each person on
   100 rows. Billed on a hit only. Check `company_match`: an email at a different company is a stale
   record, do not use it.
 - A row that comes back `still_enriching` carries a `job_id`. **Resume it, never resend.**
+- **`aiark_find_emails` is the fallback after the waterfall, not a replacement for it.** Payload
+  `{"linkedin_url": "<profile url>"}`, one person per call, work emails only, 0.034 credits. AI Ark
+  is not one of the waterfall's providers, so it can find people the waterfall missed. Tested on
+  7 Oct 2026 on five healthcare staffing leaders: four found, all `VALID` and on the firm's own
+  domain, one `NOT_FOUND`. The miss was billed 0.034 as well.
+  - The email sits at `result.email.output[0]`: `address`, `status`, `domainType`.
+  - The response is the person's full profile, 15 to 25 KB each, and there is no way to ask for
+    the email alone. That is why it runs last and on a handful of people. Do not quote or
+    summarise the rest of the response.
+  - It has no `company_match` flag. Compare the address domain with the firm's domain yourself.
 - `enrichley_validate_email`: keep `valid` and `catch_all_safe`, drop `undeliverable` and
   `catch_all_not_safe`.
 - **Client side uses work email.** These skills approach agency leaders as buyers, so work email is
@@ -180,6 +221,12 @@ company, title, start, end and `is_current`, newest first. Enrich each person on
 `serper_search` and `serper_news` (payload key `query`), `exa_answer` for one-line factual questions,
 `firecrawl_scrape` for pages that need JavaScript. The built-in web fetch stays fine and free for
 ordinary pages such as a firm's leadership page.
+
+**Serper parameters, confirmed 21 Sep 2026:** `num` is capped at 10 whatever you ask for, and the
+response echoes the capped value in `searchParameters` rather than erroring. `gl: "us"` is not the
+default and materially changes the results for staffing news, so **always set it** for a US desk.
+Billing is per request, not per result, so two 10-result queries cost the same as two 20-result ones
+would have.
 
 ---
 
@@ -195,23 +242,52 @@ ordinary pages such as a firm's leadership page.
 
 ## What the 21 Sep 2026 test runs proved
 
-Run against Clarity's live Loxo on a healthcare BD desk and a real physician-staffing candidate.
+Run against Clarity's live Loxo on a healthcare BD desk, a technology BD desk and a real
+physician-staffing candidate.
 
 **Works well**
 - `aiark_people_search` with `account.industries` "Staffing and Recruiting", `account.productAndServices`
   vertical terms, `account.employeeSize` RANGE and `contact.experience.current.duration.currentCompany`
-  `max {year, month}`. Counts drop as filters are added, so the filters bind. The payload is in
-  `clarity-bd` Lane 1.
+  `max {year, month}`. Counts drop as filters are added, so the filters bind: 229 all US staffing,
+  26 healthcare, 25 technology. The payload is in `clarity-bd` Lane 1.
 - `aiark_company_search` with the same `account` filters: 153 US physician and locums staffing firms
   at 11 to 500 staff, 0.01 credits each.
-- `serper_news` with `tbs: "qdr:m3"` for staffing M&A: four real deals in one 0.1-credit query.
+- `serper_news` with `tbs: "qdr:m3"` for staffing M&A: four real deals in one 0.1-credit query on
+  healthcare. On technology, a second variant found two US leads once `gl: "us"` was set.
 - `exa_answer` for "who is the CEO of <firm> (<domain>)": right answer, citing the firm's own team page.
+- The Loxo guardrail. One `companies_index` query on the technology run produced all three outcomes:
+  a hard exclusion (Anderson Frank, Do Not Prospect), a borderline "Client" with no activity behind
+  it (The Planet Group), a parent-group duplicate (WinterWyman) and a clean net-new firm
+  (Atlantic International).
 
 **Loose, check the output**
 - Title filters in AI Ark read **every current job** a person holds, including side businesses, and
-  WORD mode matches "President" inside "Vice President". Check the title at the agency itself.
+  WORD mode matches "President" inside "Vice President". Check the title at the agency itself. Both
+  sample rows pulled on 21 Sep matched on a side business, not the agency role.
 - "Staffing and Recruiting" includes staffing **software** vendors. Read the description.
 - A company-scoped `people_search` for C-level titles returned a CFO and a board member.
+- `serper_news` silently caps `num` at 10 and defaults to a non-US geography. Set `gl: "us"`.
+
+**Added on 7 Oct 2026 (healthcare staffing, 0.13 credits in total)**
+- `aiark_company_search` with `account.metric.growth`: 713 US healthcare staffing firms at 11 to 500
+  staff, 55 with recruiter headcount up 15% or more in six months, 96 on sales and business
+  development. The filter binds.
+- `aiark_people_search` scoped by `account.domain` with `currentCompany.max` of six months: 14
+  joiners at one of those firms, 6 in recruiter or sales titles. The sample row was a recruiter who
+  started in May 2026, filed under `human_resources`.
+- Not tested: whether the growth filter holds up on the smaller verticals, and how many of the 55
+  survive the description read.
+
+**Lanes 5 to 8, tested 7 Oct 2026 on US healthcare staffing, 11 to 500 staff (0.14 credits)**
+- `contact.profileBadge` `["HIRING"]` with leadership titles: 12 people, sample row had
+  `member_badges.hiring: true`.
+- `duration.currentJob` max 4 months with `duration.currentCompany` min 12 months: 14 people. The
+  sample row was a promotion in August 2026 into a newly created Managing Director role after 13
+  years at the firm.
+- `account.funding.type` `["PRIVATE_EQUITY"]`: 6 firms. With `funding.duration` set to the last 24
+  months: 3. The response includes each round's date and investors.
+- `account.foundedYear` 2021 to 2023 with `employeeSize` 26 to 200: 11 firms.
+- Not tested: `hyreflow_native_get_company_posts`, and any of these on another vertical.
 
 **Does not work for Clarity's market, do not use**
 - **LinkedIn or Indeed job search by title** to find agency leadership roles: 0 of 65 results were an
@@ -219,7 +295,9 @@ Run against Clarity's live Loxo on a healthcare BD desk and a real physician-sta
 - **`predictleads_job_openings`**: no data on two active healthcare staffing firms, 0.8 credits each.
 - **`search_posts`** for leadership hiring: global, off-topic posts.
 - **`contact.keyword`** on `aiark_people_search`: 400, needs an undocumented `sources` field.
+- **A `fields` object on Loxo `people_index`**: 422 Unprocessable. Query by name alone.
 
 **Slow**
 - Job and careers-page scrapes took from 7 to over 20 minutes. Launch them together, early, and do other
   work while they run.
+

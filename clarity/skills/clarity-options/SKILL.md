@@ -39,7 +39,8 @@ Ask for whatever is missing, then confirm in one line before pulling anything.
 
 1. **Candidate**: name or Loxo person id.
 2. **Recruiter**: required, no default. Offer the keys in `recruiters.json`. For someone new,
-   collect name, email and phone.
+   collect name, email and phone. If a listed recruiter has no phone on file, ask for it once and
+   use it for this run; the footer simply leaves it out when none is given.
 3. **Firms**: the four or five the recruiter has in mind. If they have none, say you will suggest
    some in Phase 3.
 

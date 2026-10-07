@@ -94,8 +94,9 @@ def fill_template(tpl: str, data: dict, recruiter: dict, variant: str, fonts: st
         "{{ACHIEVEMENTS_HEADING}}": esc(data.get("achievements_heading") or DEFAULT_HEADING),
         "{{ACHIEVEMENT_ITEMS}}": li_list(v.get("achievements")),
         "{{RECRUITER_EMAIL}}": esc(recruiter.get("email")),
-        "{{RECRUITER_PHONE}}": esc(recruiter.get("phone")),
-        "{{RECRUITER_PHONE_RAW}}": esc(phone_raw),
+        "{{RECRUITER_PHONE_BLOCK}}": (
+            f'\n      <a href="tel:{esc(phone_raw)}">{esc(recruiter.get("phone"))}</a> ·' if phone_raw else ""
+        ),
         "{{TAGLINE}}": esc(data.get("tagline") or DEFAULT_TAGLINE),
     }
     out = tpl
@@ -146,8 +147,8 @@ def main() -> None:
 
     data = json.loads(Path(args.content).read_text(encoding="utf-8"))
     recruiter = data.get("recruiter") or {}
-    if not recruiter.get("email") or not recruiter.get("phone"):
-        raise SystemExit("content.recruiter must include email and phone (required per-run input).")
+    if not recruiter.get("email"):
+        raise SystemExit("content.recruiter must include an email (required per-run input).")
 
     tpl = (WEB / "template.html").read_text(encoding="utf-8")
     fonts, logo = font_faces(), logo_data_uri()

@@ -1,6 +1,6 @@
 ---
 name: "clarity-bd"
-description: "Find net-new business-development contacts for Clarity R2R from real market signals, then use Loxo to suppress anyone already engaged and to add context. Runs on Hyreflow. Discovery is external only, so every contact it returns is someone Clarity is not already talking to. Four signal lanes: people movement (new leaders and the firms they left), agency headcount growth, funding and growth news, and candidate-derived firm seeds. Scores each lead, carries the dated evidence, and routes to the right desk owner. Use whenever someone wants new clients, new business, BD leads, target firms, or a reason to call someone, for example \"build me a healthcare BD list\", \"who should I be going after this week\", \"find me agencies that are hiring\", \"who just raised money in my market\", \"strip this candidate's employers\", \"give me some BD\". Never enrols anyone and never sends."
+description: "Find net-new business-development contacts for Clarity R2R from real market signals, then use Loxo to suppress anyone already engaged and to add context. Runs on Hyreflow. Discovery is external only, so every contact it returns is someone Clarity is not already talking to. Eight signal lanes: people movement (new leaders and the firms they left), agency headcount growth, acquisition and growth news, candidate-derived firm seeds, leaders flagged as hiring, internal promotions, private equity funding by date, and young firms that are scaling. Scores each lead, carries the dated evidence, and routes to the right desk owner. Use whenever someone wants new clients, new business, BD leads, target firms, or a reason to call someone, for example \"build me a healthcare BD list\", \"who should I be going after this week\", \"find me agencies that are hiring\", \"who just raised money in my market\", \"strip this candidate's employers\", \"give me some BD\". Never enrols anyone and never sends."
 ---
 
 # Clarity BD, net-new leads from real signals
@@ -37,7 +37,7 @@ and it never sends anything.**
   hides the real fill rate. If the user wants those, say so and offer it as a separate run.
 - **Not candidate sourcing.** Buy side only. Who Clarity places lives in `icp-candidates.md`, and
   mixing the two lists produces nonsense.
-- **Not the candidate-side version of itself.** `clarity-market-spec` Track B runs firm-level lanes
+- **Not the candidate-side version of itself.** `clarity-spec-market` Track B runs firm-level lanes
   aimed at one named candidate, and it hands its net-new firms back here. If the ask starts with a
   candidate rather than a desk, that is the skill.
 
@@ -50,11 +50,16 @@ and it never sends anything.**
 
 ## What this is honestly good at
 
-All four lanes now run on real data. **Lane 1 (people movement)** and **Lane 3 (funding and news)**
-are the strongest: dated events from AI Ark and PredictLeads through Hyreflow. **Lane 4 (candidate
+Lanes 1 to 4 are the core. **Lane 1 (people movement)** and **Lane 3 (acquisition and news)** are
+the strongest: dated events from AI Ark and news search through Hyreflow. **Lane 4 (candidate
 seeds)** is Clarity's best-converting source. **Lane 2 (headcount growth)** finds firms that have
-already been hiring, from AI Ark's headcount data, so it is a filter first and needs the joiner
-count in step 2 before it counts as evidence.
+already been hiring, so it is a filter first and needs the joiner count before it counts as
+evidence.
+
+**Lanes 5 to 8 widen the list.** They surface different people and firms from the same market:
+leaders with LinkedIn's Hiring badge, leaders promoted from inside, firms that took private equity
+money, and young firms growing past founder-led size. Each was tested once, on US healthcare
+staffing, on 7 Oct 2026. Treat their counts on other desks as unknown until you have run them.
 
 **Expect low counts and defend them.** Net-new over a well-worked market is a small number by design.
 If a lane returns four firms, report four. The fill rate is information. The whole thing is **an input
@@ -68,7 +73,8 @@ Ask three questions, no more:
 
 1. **Which desk or vertical?** Healthcare, technology, life sciences, built environment, finance and
    accounting, financial services, energy. Or "all".
-2. **Which lanes?** Default to **1 and 3** if they say "just give me some BD". Lane 4 needs a
+2. **Which lanes?** Default to **1 and 3** if they say "just give me some BD". If they want more
+   variety, or the default came back thin, add **5, 6 and 8**. Lane 4 needs a
    candidate, so ask who they are working.
 3. **Where?** A metro, a state list or the whole US.
 
@@ -295,6 +301,119 @@ recruiters. That is a signal about a *firm*. The people you then approach are fo
 Signal strength: **4**. Evidence: "employed [candidate] as [title] until [date]", or "[candidate]
 mentioned interviewing here on [date]".
 
+### Lane 5, leaders flagged as hiring
+
+A founder or CEO who has switched on LinkedIn's Hiring badge is telling the market they are adding
+people now.
+
+Use the Lane 1 payload with two changes: remove the `duration` block, and add this inside
+`contact`:
+
+```json
+"profileBadge": {"any": {"include": ["HIRING"]}}
+```
+
+- Count first with `size: 1`. In testing, US healthcare staffing at 11 to 500 staff returned 12
+  leaders. Then pull up to 25.
+- Each row carries `member_badges.hiring: true`. If it is false, the filter did not bind.
+- **The badge does not say who they are hiring.** Agency leaders also switch it on for client
+  roles. Before scoring above 3, check the firm's careers page or the person's recent posts for an
+  internal role: a recruiter, a team lead, a director.
+- Apply the three Lane 1 checks: title at the agency, Vice President matching President, software
+  vendors.
+
+Signal strength: **4** when you have confirmed an internal recruiter or leadership hire. **3** for
+the badge alone. Evidence line: "Hiring badge on [name]'s profile, seen [date]", plus the role if
+you found one.
+
+### Lane 6, internal promotions
+
+Lane 1 finds leaders who changed firm. This lane finds the ones who were promoted where they are.
+A newly promoted leader inherits a team, usually reshapes it, and often has budget for the first
+time.
+
+Use the Lane 1 payload with this `duration` block in place of the original:
+
+```json
+"duration": {"currentJob": {"max": {"year": 0, "month": 4}},
+             "currentCompany": {"min": {"year": 1, "month": 0}}}
+```
+
+That reads: in the current title for four months or less, at the firm for a year or more.
+
+- Count first. In testing, US healthcare staffing returned 14.
+- In each row, `position_groups[0].profile_positions` lists the roles at the current firm, newest
+  first. Read the new title, its start date and the title before it. That pair is the evidence.
+- A description that says "newly created role" or "to lead" a new practice is the strongest
+  version: the firm is building something and has just named who runs it.
+- **The vertical match is loose here.** One test row was a generalist search firm that lists
+  healthcare among many sectors. Check that the person's own remit is in the desk's market.
+- Apply the three Lane 1 checks.
+
+Signal strength: **5** for a newly created leadership role inside 90 days. **4** for a promotion
+into a C-level, President or Managing Director title inside 90 days. **3** up to four months.
+
+### Lane 7, private equity backed, by funding date
+
+Lane 3 finds deals through the news. This lane asks AI Ark directly which firms took private equity
+money and when, which catches deals that had no press.
+
+`aiark_company_search` with the Lane 2 `account` filters, minus `metric`, plus:
+
+```json
+"funding": {"type": ["PRIVATE_EQUITY"],
+            "duration": {"start": "<epoch milliseconds>", "end": "<epoch milliseconds>"}}
+```
+
+- `start` and `end` are milliseconds since 1970, **as strings**. Use the last 24 months.
+- In testing, US healthcare staffing held 6 firms with any private equity round and 3 inside 24
+  months. One of them, VeloSource, is a deal Lane 3 also found in the news, which is a good sign the
+  data is real. **Expect single digits.** Agencies rarely appear in funding databases.
+- The response carries the evidence: `financial.funding.rounds[]` with `announced_at`, `type` and
+  `investors`. Quote the date and the investor.
+- Read `summary.industry`. Job marketplaces and staffing software come through this filter. One
+  test row was a healthcare jobs marketplace, not an agency. Drop those.
+- 0.01 credits per firm.
+
+Signal strength: **4** for a round inside 12 months. **3** for 12 to 24 months. If Lane 3 found the
+same deal, merge them and keep the higher score.
+
+### Lane 8, young firms that are scaling
+
+An agency three to five years old that has grown past about 25 people is leaving founder-led size.
+It is usually hiring its first managers, which is the hire Clarity makes.
+
+`aiark_company_search` with the Lane 2 `account` filters, minus `metric`, with these two changed:
+
+```json
+"employeeSize": {"type": "RANGE", "range": [{"start": 26, "end": 200}]},
+"foundedYear": {"type": "RANGE", "range": {"start": <this year minus 5>, "end": <this year minus 3>}}
+```
+
+- Note the shapes: `employeeSize` takes an **array** under `range`, `foundedYear` takes a **single
+  object**. Swapping them returns a 400 or an ignored filter.
+- In testing, US healthcare staffing returned 11 firms founded 2021 to 2023 with 26 to 200 staff.
+- Use `summary.staff.total` for the headcount. `staff.range` is a LinkedIn bracket and was wrong on
+  the test row.
+- Then run the Lane 2 joiner count on each firm you keep. A young firm that is also adding
+  recruiters is a much stronger lead than age and size alone.
+- Find out whether there is a leadership layer yet. If Part 2 finds only the founder above the
+  billers, say so: that is the gap.
+
+Signal strength: **4** when the joiner count shows three or more recruiter or sales joiners in six
+months, or there is no manager between the founder and the team. **3** on age and size alone.
+
+### Optional, the firm's own posts
+
+For a firm already on the list that needs a stronger reason to call, read its recent LinkedIn
+posts: `hyreflow_native_get_company_posts` with `username` (the handle from
+`linkedin.com/company/<handle>`) and `limit: 10`. 0.2 credits per request. Look for a new division,
+a new office, a record quarter or an internal hiring post, and quote the post date.
+
+**Pilot this before relying on it.** It has not been tested on staffing firms. Run it on one firm,
+read what comes back, and use it on five firms at most per run. It adds evidence to a lead from
+another lane. It is not a lane of its own.
+
 ---
 
 ## Part 2, the people. Levels.
@@ -425,6 +544,11 @@ Use Loxo to check whether a consultant already owns activity near that firm, and
 
 Score each lead **1 to 5** on signal strength using the per-lane guidance. **Only 3 and above goes
 into an outreach queue.** Show 1s and 2s in a separate low-signal section, clearly labelled.
+
+**A firm that shows up in more than one lane is one lead.** List every signal with its date, take
+the highest lane score, and add 1 when two of the signals are independent of each other, to a
+maximum of 5. A promotion plus a private equity round is two signals. A joiner in Lane 1 who also
+shows the Hiring badge is one.
 
 Every lead carries its **evidence**: the specific thing that happened, the date, and the source. A lead
 without evidence is a name, not a lead. The consultant references that evidence in the message, so if

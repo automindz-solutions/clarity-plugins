@@ -1,21 +1,22 @@
 ---
-name: clarity-shortlist
-description: Build a scored candidate shortlist for a Clarity R2R job from Loxo. Given a Loxo job ID (or a job title + client), it reconstructs the brief from the hiring-manager contact, searches the candidate database, and returns a ranked shortlist plus relevant net-new candidates from the wider market. Use this whenever the user wants to find, match, shortlist, or rank candidates for a role — e.g. "who should I put forward for the JSS VP job", "shortlist candidates for job 3425833", "find Loxo candidates for this role", "match our database to this vacancy", "build a hotlist for [client] [role]" — even if they don't say the word "shortlist". Read-only by default; never writes to Loxo without explicit approval.
+name: clarity-shortlist-loxo
+description: Build a scored candidate shortlist for a Clarity R2R job from the Loxo database. Given a Loxo job ID (or a job title + client), it reconstructs the brief from the hiring-manager contact, searches the candidate database, and returns a ranked shortlist of people Clarity already knows. Use this whenever the user wants to find, match, shortlist, or rank candidates for a role from Loxo, for example "who should I put forward for the JSS VP job", "shortlist candidates for job 3425833", "find Loxo candidates for this role", "match our database to this vacancy", "build a hotlist for [client] [role]". For candidates outside Loxo use clarity-shortlist-market. Read-only by default; never writes to Loxo without explicit approval.
 ---
 
-# Clarity Shortlist — candidate ↔ job matcher (CoWork / MCP build)
+# Clarity Shortlist Loxo — candidate ↔ job matcher, inside the database
 
-Turn a Loxo job into a **ranked, scored candidate shortlist**, plus net-new candidates worth sourcing.
+Turn a Loxo job into a **ranked, scored candidate shortlist** of people already in the database.
 
 **This build uses connectors only — no local scripts, no API keys, no cached database.** Loxo is read
-through the Loxo MCP and the wider market through the AI Ark MCP. You do the scoring yourself;
+through the Loxo MCP. The wider market is a separate skill, `clarity-shortlist-market`. You do the scoring yourself;
 there is no separate scoring model to pay for or exhaust.
 
 ## Prerequisites
 
 - **Loxo MCP connected** (agency `clarity-r2r`). If Loxo tools are unavailable, stop and say so —
   do not guess candidates from memory.
-- **AI Ark MCP connected** — only needed for the opt-in net-new step.
+- **Nothing else.** This skill spends no Hyreflow credits and never looks up emails or phone
+  numbers. Loxo already holds the contact details that exist.
 
 ## What this is honestly good at (set expectations with the user)
 
@@ -101,7 +102,7 @@ people_index(query: 'current_company:"<client firm>"', per_page: 100)
 ```
 
 Exclude everyone that returns, and **tell the user who you excluded and why**. This is the mirror of
-the own-employer guard in `clarity-spec`: there we never spec someone *into* their employer, here we
+the own-employer guard in `clarity-spec-loxo`: there we never spec someone *into* their employer, here we
 never pull someone *out of* the client and hand them back.
 
 Match firm names on a normalised form — lowercase, punctuation stripped, and generic words removed
@@ -123,29 +124,15 @@ Present ranked, with a **specific one-line reason per candidate** — not a reus
 are already in the job's pipeline (`candidates_job_index(job_id)`) versus fresh from the database.
 Frame it as a review list and offer to open any candidate's full record.
 
-### 6. (Opt-in) Net-new candidates from the wider market
+### 6. Candidates outside Loxo
 
-Only if the user asks. Source agency-side recruiters not already in Loxo:
+This skill stops at the database. If the shortlist is thin, or the recruiter wants people Clarity
+does not know yet, hand off to **`clarity-shortlist-market`** and pass it the confirmed brief, the
+client firm and the names already shortlisted. That skill searches the open market through Hyreflow
+and removes anyone already in Loxo.
 
-```
-mcp__ai-ark__people_search(
-  companyIndustry: <staffing/recruiting values — resolve via industry_search first>,
-  title: <role titles from the brief>,
-  location: <metro>,
-  seniority: <owner/vp/director/head as fits>,
-  size: 25)
-```
-
-Rules that matter:
-- **Resolve enum values first** with `industry_search` / `location_search`. Never invent them.
-- **Agency-side only** — staffing and recruiting industries, not internal/corporate TA.
-- **Do NOT filter on `openToWork`.** R2R candidates are senior billers who never flag themselves;
-  filtering on it excludes exactly the people you want.
-- **Dedup against Loxo** before showing anything: for each result, check
-  `people_index(query: 'current_company:"<their firm>"')` or search their name, and drop anyone
-  already in the CRM.
-- **Apply the same client-firm guard** — never surface someone who works at the hiring client.
-- `size` is a real cost. Start at 25, and tell the user the count before pulling more.
+**Do not search the market from here**, with AI Ark or any other connector. The old AI Ark step
+returned people in the wrong locations and roles, which is why it was removed.
 
 ### 7. (Opt-in) Create net-new candidates in Loxo — WRITES
 

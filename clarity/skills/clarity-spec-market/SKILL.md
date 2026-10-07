@@ -1,11 +1,11 @@
 ---
-name: "clarity-market-spec"
+name: "clarity-spec-market"
 description: "Find places across the open market, outside Loxo, that a Clarity R2R candidate could be specced into, then check every firm against Loxo. Runs on Hyreflow. Track A reads staffing firms' own careers sites for live leadership openings the agency is hiring for itself. Track B finds firms worth speccing into with no posted vacancy, on same market focus, remote-hiring posture, a growth or leadership-gap signal, or a pattern of hiring people like this candidate. Both tracks name the hiring manager, check firms and people against Loxo, and return a ranked list routed to the right desk. Use whenever someone wants places to spec a candidate beyond the CRM, for example \"what live roles could I spec Sarah into\", \"who's hiring a VP Sales in healthcare staffing right now\", \"which firms would want this candidate\", \"find me agencies in her market that hire remote\", \"spec this guy out\", \"any live RVP roles in the Southeast for my candidate\". Read-only. Never sends, never writes to Loxo."
 ---
 
-# Clarity Market Spec, the open market for a candidate
+# Clarity Spec Market, the open market for a candidate
 
-`clarity-spec` finds firms **inside Loxo** that fit a candidate. This skill covers everything else:
+`clarity-spec-loxo` finds firms **inside Loxo** that fit a candidate. This skill covers everything else:
 the US market Clarity does not have on its books, so a consultant can spec a strong candidate
 outward. James, 1 Sep: *"I've got this candidate... is there any live roles across the market that we
 can spec this guy to?"*

@@ -8,7 +8,7 @@
 
 :root{
   --bg:#111111;
-  --gold:#F8C000;
+  --gold:#FFC500;
   --text:#F0F0F0;
   --muted:#8A8A8A;
   --scale:1;             /* auto-fit shrinks this until content fits one A4 page */
@@ -137,8 +137,7 @@ body{
     </ul>
 
     <div class="footer">
-      <a href="mailto:{{RECRUITER_EMAIL}}">{{RECRUITER_EMAIL}}</a> ·
-      <a href="tel:{{RECRUITER_PHONE_RAW}}">{{RECRUITER_PHONE}}</a> ·
+      <a href="mailto:{{RECRUITER_EMAIL}}">{{RECRUITER_EMAIL}}</a> ·{{RECRUITER_PHONE_BLOCK}}
       Exclusively represented by Clarity R2R &nbsp; <span class="tag">{{TAGLINE}}</span>
     </div>
   </div>

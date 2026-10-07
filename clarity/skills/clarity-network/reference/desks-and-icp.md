@@ -69,6 +69,6 @@ qualification checklist precisely because the title does not answer them.
 ## Where this is used
 
 - **clarity-network** — level filter and desk routing on the chase list.
-- **clarity-shortlist / clarity-spec** — target definition (they may already hold their own
+- **clarity-shortlist-loxo / clarity-spec-loxo** — target definition (they may already hold their own
   copies; this file is the shared version and should win once reconciled).
 - **clarity-daily-brief** — recognising whose meeting a given contact really belongs to.

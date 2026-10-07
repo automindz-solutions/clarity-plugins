@@ -1,6 +1,6 @@
 # Hyreflow, how clarity-bd uses it
 
-Hyreflow is the data engine behind `clarity-bd` and `clarity-market-spec`. The team never sees it:
+Hyreflow is the data engine behind `clarity-bd` and `clarity-spec-market`. The team never sees it:
 the interface stays Claude, Hyreflow runs underneath. It replaces the old mix of raw web search and
 the AI Ark connector, which could not express AI Ark's nested filters and returned wrong lists.
 
@@ -83,6 +83,8 @@ names they actually want.
 | Read a page, including JS-rendered | `firecrawl_scrape` | 0.1 |
 | Work email | `email_enrichment` | billed at the rate of the provider that finds it: Prospeo 0.4, FullEnrich 1.3, Lusha 2.9, Wiza 1.0, tried in that order (7 Oct 2026) |
 | Work email, fallback for the misses | `aiark_find_emails` | 0.034 per lookup, one person per call |
+| Personal email, candidates only, after a yes | `personal_email` | quote with `dry_run: true`, costs more than work email |
+| A firm's recent LinkedIn posts | `hyreflow_native_get_company_posts` | 0.2 per request, up to 50 posts |
 | Email check | `enrichley_validate_email` | 0.25 |
 | Mobile | `aiark_mobile_phone_finder` | about 0.33 |
 
@@ -275,6 +277,17 @@ physician-staffing candidate.
   started in May 2026, filed under `human_resources`.
 - Not tested: whether the growth filter holds up on the smaller verticals, and how many of the 55
   survive the description read.
+
+**Lanes 5 to 8, tested 7 Oct 2026 on US healthcare staffing, 11 to 500 staff (0.14 credits)**
+- `contact.profileBadge` `["HIRING"]` with leadership titles: 12 people, sample row had
+  `member_badges.hiring: true`.
+- `duration.currentJob` max 4 months with `duration.currentCompany` min 12 months: 14 people. The
+  sample row was a promotion in August 2026 into a newly created Managing Director role after 13
+  years at the firm.
+- `account.funding.type` `["PRIVATE_EQUITY"]`: 6 firms. With `funding.duration` set to the last 24
+  months: 3. The response includes each round's date and investors.
+- `account.foundedYear` 2021 to 2023 with `employeeSize` 26 to 200: 11 firms.
+- Not tested: `hyreflow_native_get_company_posts`, and any of these on another vertical.
 
 **Does not work for Clarity's market, do not use**
 - **LinkedIn or Indeed job search by title** to find agency leadership roles: 0 of 65 results were an

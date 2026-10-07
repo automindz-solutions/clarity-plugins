@@ -40,9 +40,8 @@ playwright install chromium --with-deps
 | Muted | `#8A8A8A` | |
 | Typeface | Poppins | 400 / 600 / 700 only |
 
-`web/template.html` still ships with the **old** gold `#F8C000`, and the skill directory is mounted
-read-only, so it cannot be patched in place. **Every run must render from a writable copy** — see
-Phase 4. Any other Clarity artwork built outside this skill (LinkedIn cards, one-pagers, decks) uses
+`web/template.html` ships with `#FFC500`. The skill directory is mounted read-only, so **every run
+renders from a writable copy** — see Phase 4. Any other Clarity artwork built outside this skill (LinkedIn cards, one-pagers, decks) uses
 `#FFC500` directly.
 
 **Do not restyle** anything else — only fill content.
@@ -125,17 +124,14 @@ adjectives.
 
 Show the drafted bullets to the user and confirm before rendering.
 
-### PHASE 4: Render (always from a writable copy, with the brand gold applied)
+### PHASE 4: Render (always from a writable copy)
 
-The skill directory is read-only and its template still carries the old gold, so copy the runtime
-into the working directory first and patch the colour there. `render_frontsheet.py` resolves
+The skill directory is read-only, so copy the runtime into the working directory first. `render_frontsheet.py` resolves
 `web/` relative to its own parent, so keep `scripts/` and `web/` siblings in the copy.
 
 ```bash
 SKILL_DIR="<this skill's directory>"      # the path this SKILL.md was read from
 cp -r "$SKILL_DIR/scripts" "$SKILL_DIR/web" "$SKILL_DIR/recruiters.json" .
-sed -i 's/--gold:#F8C000/--gold:#FFC500/' web/template.html
-grep -q -- '--gold:#FFC500' web/template.html || { echo "brand gold not applied"; exit 1; }
 
 python3 scripts/render_frontsheet.py "output/{slug}/content.json" --variant both
 ```

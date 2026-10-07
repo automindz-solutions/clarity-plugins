@@ -82,7 +82,7 @@ def logo_data_uri() -> str:
 def validate(data: dict) -> None:
     errors = []
     recruiter = data.get("recruiter") or {}
-    for key in ("name", "email", "phone"):
+    for key in ("name", "email"):
         if not recruiter.get(key):
             errors.append(f"recruiter.{key} is required")
     if not (data.get("candidate") or {}).get("first_name"):
@@ -165,7 +165,7 @@ def build_html(data: dict) -> str:
         "{{LOGO_SRC}}": logo_data_uri(),
         "{{TITLE}}": esc(f'Options for {data["candidate"].get("name") or data["candidate"]["first_name"]}'),
         "{{BLOCKS}}": "\n".join(blocks),
-        "{{FOOTER_CONTACT}}": " · ".join(esc(recruiter[k]) for k in ("name", "email", "phone")),
+        "{{FOOTER_CONTACT}}": " · ".join(esc(recruiter[k]) for k in ("name", "email", "phone") if recruiter.get(k)),
         "{{TAGLINE}}": TAGLINE,
     }
     # Single pass, so token-like text inside the authored content is never substituted.

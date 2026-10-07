@@ -1,6 +1,6 @@
 ---
 name: clarity-brief
-description: Interview the recruiter about a role and produce a search-ready job brief for Clarity R2R, before any sourcing happens. Fixes vague briefs that make shortlists drift off-geography or off-market. Use whenever someone is about to search for candidates and there is no written brief, or the last search came back wrong, or they say things like "I need to find people for X", "help me brief this role", "write up this job", "the shortlist was all over the place", "take an intake for this role", "I'm hiring internally for us". Always offer it before clarity-shortlist when the job has no brief in Loxo. Produces a document only, writes nothing to Loxo or Lemlist.
+description: Interview the recruiter about a role and produce a search-ready job brief for Clarity R2R, before any sourcing happens. Fixes vague briefs that make shortlists drift off-geography or off-market. Use whenever someone is about to search for candidates and there is no written brief, or the last search came back wrong, or they say things like "I need to find people for X", "help me brief this role", "write up this job", "the shortlist was all over the place", "take an intake for this role", "I'm hiring internally for us". Always offer it before clarity-shortlist-loxo when the job has no brief in Loxo. Produces a document only, writes nothing to Loxo or Lemlist.
 ---
 
 # Clarity Brief, the intake that makes sourcing work
@@ -10,7 +10,7 @@ search tools get "recruiters in Florida" and return New Zealand, because nothing
 them not to.
 
 This skill takes ninety seconds of interview and produces a brief the search tools can act on.
-Run it **before** `clarity-shortlist`, every time there is no brief.
+Run it **before** `clarity-shortlist-loxo`, every time there is no brief.
 
 **Output only. This skill writes nothing anywhere and searches for nobody.**
 
@@ -133,7 +133,7 @@ Compensation: [base range], OTE [range]
 
 Show the brief, then ask for one round of corrections. Once confirmed, offer exactly this:
 
-> Want me to run `/clarity-shortlist` against this brief now?
+> Want me to run `/clarity-shortlist-loxo` against this brief now?
 
 If they say yes, pass the **Search directives** block verbatim. Do not re-summarise it and do not
 soften it.
