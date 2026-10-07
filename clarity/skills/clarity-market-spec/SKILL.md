@@ -269,6 +269,15 @@ wrote the advert.
 - **Volume of the firm's own recruiter hires, score 3.** From the careers-page scrape in Step 2 if the
   firm was read there. Count the agency's own recruiter and account-manager roles only. Can't tell own
   from client, don't count it.
+- **Headcount growth, score 3.** Rerun the Step 2 `aiark_company_search` with one extra filter,
+  `"metric": {"growth": [{"function": ["human_resources"], "start": 15, "end": 500,
+  "timeFrame": "SIX"}]}` inside `account`. It returns the firms on the market list whose recruiter
+  headcount grew 15% or more in six months, at 0.01 credits a firm. Use `["sales",
+  "business_development"]` for the sales side. The response carries no growth figure, so for a firm
+  you shortlist, count its joiners: `aiark_people_search` scoped by `account.domain` with
+  `duration.currentCompany` max 6 months and `size: 1`, then read `result.totalElements` (0.05
+  credits). Quote that count and the date as the source. Tested on 7 Oct 2026 on US healthcare
+  staffing: 713 firms, 55 growing on the recruiter side.
 
 Every B3 lead needs a **dated source**: the Hyreflow record with its date, or a URL you fetched. Never
 state a funding round or a departure you could not source.
@@ -405,6 +414,10 @@ credit estimate:
 - Loxo first. If Loxo has the email, do not pay for it.
 - Otherwise `email_enrichment` in one batch for the picked names only (LinkedIn URL where you have it,
   else name plus firm domain). Keep only rows where `company_match` is true.
+- For names that came back empty and have a LinkedIn URL, try `aiark_find_emails`, one person per
+  call with `linkedin_url`. Read `result.email.output[0]` only: keep the `address` when `status` is
+  `VALID` and the domain is the firm's own. Cap it at five people per run, each response carries the
+  whole profile. Details in `reference/hyreflow.md`.
 - Mobile only if asked: `aiark_mobile_phone_finder`.
 
 Never construct an email address or guess a LinkedIn URL. No details found, mark "needs contact

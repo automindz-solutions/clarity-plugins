@@ -92,7 +92,7 @@ when called directly, while the waterfall says only hits are metered: read `_met
 after the first batch to see which applies.
 
 Measured on the 21 Sep 2026 test runs, before contact enrichment: **BD 2.4 credits**, **spec about 6**
-(two exploratory LinkedIn scrapes that the skill no longer uses cost 3.25 of that). A Lane 1 plus
+(two exploratory LinkedIn scrapes that the skill no longer uses cost 3.25 of that). A `clarity-bd` Lane 1 plus
 Lane 3 count-only smoke test on a new vertical costs about **0.3**.
 
 ---
@@ -144,7 +144,7 @@ healthcare agencies in testing and still billed 0.8 each.
 - `timeFrame`: `ONE`, `THREE`, `SIX`, `TWELVE`, `TWENTY_FOUR` (months).
 - `function` values that matter here: `human_resources` (an agency's recruiters sit here),
   `sales`, `business_development`, `operations`.
-- The response carries no growth figure. Confirm with a joiner count, see Lane 2.
+- The response carries no growth figure. Confirm with a joiner count, see `clarity-bd` Lane 2.
 - An unknown key or a wrong wrapper is ignored without an error and bills the unfiltered result.
   Always check that `totalElements` drops.
 
@@ -247,7 +247,7 @@ physician-staffing candidate.
 - `aiark_people_search` with `account.industries` "Staffing and Recruiting", `account.productAndServices`
   vertical terms, `account.employeeSize` RANGE and `contact.experience.current.duration.currentCompany`
   `max {year, month}`. Counts drop as filters are added, so the filters bind: 229 all US staffing,
-  26 healthcare, 25 technology. The payload is in Lane 1 above.
+  26 healthcare, 25 technology. The payload is in `clarity-bd` Lane 1.
 - `aiark_company_search` with the same `account` filters: 153 US physician and locums staffing firms
   at 11 to 500 staff, 0.01 credits each.
 - `serper_news` with `tbs: "qdr:m3"` for staffing M&A: four real deals in one 0.1-credit query on
