@@ -3,11 +3,10 @@
 **Load this file only when the `sync` mode runs, or when a sweep is about to write notes.**
 A chase list never needs it.
 
-**Never executed.** Loxo has not been connected in any workspace this skill has run in, and
-`tools.json` still lists every Loxo tool name as unresolved — `loxo_add_note` included. Nothing
-below has been tested against a real CRM. Resolve the tool names first (Phase 1), and if the
-only available Loxo write does more than append a note, **stop and ask** rather than using a
-broader tool and omitting fields.
+**Never executed, dry run only.** The Loxo read tools are pinned in `tools.json`, so matching and
+the dry-run report work. `loxo_add_note` is still unresolved, and nothing below has written to a
+real CRM. Resolve the note-append tool first (Phase 1), and if the only available Loxo write does
+more than append a note, **stop and ask** rather than using a broader tool and omitting fields.
 
 The four write fences this mode operates under are in the write policy in SKILL.md; they are
 binding and are not restated here.

@@ -1,7 +1,7 @@
 {
-  "_comment": "Capability -> MCP tool map for clarity-network. First run: discover once, write the names back here, then bind directly on every later run. Kondo names are verified against a live account; Loxo names are unresolved because no workspace this skill has run in has Loxo connected at all.",
+  "_comment": "Capability -> MCP tool map for clarity-network. Kondo names are verified against a live account. Loxo read names are the ones Clarity's Loxo connector exposes and the other Clarity skills already call (people_index, people_show, person_events_index, companies_index, companies_show, company_people_index). The Loxo note-append tool is still unresolved, so sync stays a dry run until it is named here.",
   "rate_limit": "Kondo's LinkedIn-backed tools (load_chat, list_connections, set_chat_archived, set_chat_label, set_chat_reminder) allow ONE call every 2 seconds and must be sequential — parallel calls fail with -32000. load_chat takes one thread per call, so a 30-thread shortlist costs ~90s. list_inbox and read_chat are local and unrestricted.",
-  "resolution_rule": "Name present -> call it directly, no discovery. Name null -> discover among connected MCPs, use it, write it back. required:true unresolvable -> STOP and name the missing capability. Never substitute a broader tool.",
+  "resolution_rule": "Name present -> call it directly, no discovery. If a pinned name is not in the tool list, check alt_names, then discover among connected MCPs. Name null -> discover, use it, and report the name you used at the top of the output so it can be pinned in the next plugin version. The installed skill folder is read-only, so do not try to write the name back from a run. required:true unresolvable -> STOP and name the missing capability. Never substitute a broader tool.",
   "capabilities": {
     "kondo_list_chats": {
       "required": false,
@@ -47,8 +47,9 @@
       "required": false,
       "purpose": "write a prepared reply into a thread — DOES NOT SEND",
       "expected_tool": "set_chat_draft",
-      "resolved": null,
-      "note": "Approval-gated, interactive runs only. Kondo exposes no send tool at all."
+      "resolved": "Kondo:set_chat_draft",
+      "note": "Approval-gated, interactive runs only. Kondo exposes no send tool at all.",
+      "verified": "2026-09-01, returns a chatUrl and confirms the draft is not sent"
     },
     "kondo_list_connections": {
       "required": false,
@@ -59,29 +60,46 @@
     "loxo_find_person": {
       "required": true,
       "purpose": "resolve a person by linkedin_url first (77.5% coverage), then name + company",
-      "expected_tool": "unknown — resolve in place",
-      "resolved": null,
-      "note": "Server registered as `loxo` at https://app.loxo.co/api/clarity-r2r/mcp. Data-tool names have never been observed — clarity-frontsheet guesses people_index / people_show but that is a GUESS. James's workspace exposes the real names."
+      "expected_tool": "people_index, then people_show",
+      "resolved": "people_index",
+      "then": "people_show(id) for the full record including linkedin_url and source; person_job_profiles_index(person_id) when the match needs job history",
+      "alt_names": [
+        "loxo_search_candidates",
+        "loxo_get_candidate"
+      ],
+      "verified": "name in use by clarity-bd, clarity-spec-loxo and clarity-options on Clarity's Loxo connector; not yet run from clarity-network",
+      "note": "Query by name alone: people_index(query: '\"<full name>\"', per_page: 10). Passing a `fields` object returns a 422. Confirm the match on linkedin_url from people_show, never on the name alone."
     },
     "loxo_person_notes": {
       "required": true,
-      "purpose": "call notes and activity — history and the booked-call backtrack",
-      "expected_tool": "unknown — resolve in place",
-      "resolved": null
+      "purpose": "call notes and activity. Drives history and the booked-call backtrack",
+      "expected_tool": "person_events_index",
+      "resolved": "person_events_index",
+      "alt_names": [
+        "loxo_get_candidate_activities"
+      ],
+      "verified": "name in use by clarity-bd, clarity-spec-loxo and clarity-options on Clarity's Loxo connector; not yet run from clarity-network",
+      "usage": "person_events_index(person_id, per_page: 20). Returns call notes plus VXT and Teams transcripts."
     },
     "loxo_company_activity": {
       "required": true,
-      "purpose": "company notes — placements, terms, interviews. Drives the existing-client guard.",
-      "expected_tool": "unknown — resolve in place",
-      "resolved": null,
-      "note": "Without this the client guard is SILENTLY disabled and the output still looks complete. Never run the sweep without it — say it is missing."
+      "purpose": "relationship activity at a firm: placements, terms, interviews. Drives the existing-client guard.",
+      "expected_tool": "companies_index -> companies_show -> company_people_index -> person_events_index",
+      "resolved": "companies_show",
+      "then": "companies_index(query) resolves the firm id; companies_show(id) carries internal_notes_text; company_people_index(company_id) lists the contacts; person_events_index on those contacts gives the dated activity",
+      "alt_names": [
+        "loxo_search_companies",
+        "loxo_get_company_details"
+      ],
+      "verified": "name in use by clarity-bd, clarity-spec-loxo and clarity-options on Clarity's Loxo connector; not yet run from clarity-network",
+      "note": "Without this the client guard is SILENTLY disabled and the output still looks complete. Never run the sweep without it. Say it is missing."
     },
     "loxo_add_note": {
       "required": false,
       "purpose": "append a LinkedIn activity note. The only write this skill makes.",
-      "expected_tool": "unknown — resolve in place",
+      "expected_tool": "unknown, resolve in place",
       "resolved": null,
-      "note": "Must append a note and nothing else. If the only available Loxo write also attaches to jobs or changes status, STOP and ask — do not use the broader tool and simply omit fields."
+      "note": "Not yet observed on Clarity's connector. Until a name is pinned here, sync runs as a dry run only. Must append a note and nothing else. If the only available Loxo write also attaches to jobs or changes status, STOP and ask. Do not use the broader tool and simply omit fields."
     },
     "notion_fetch_page": {
       "required": false,

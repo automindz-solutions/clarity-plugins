@@ -5,8 +5,7 @@ tiers decide the order, and two promotion flags lift people inside their tier.
 
 Fetch the live pages via `reference/notion-sources.json` — `referrals` for the tiers and
 scripts, `gtm_day_plan` for the Top 300 Ecosystem. This file is the fallback if Notion is
-unreachable. (If `clarity-context` is installed its shared map wins, but nothing here depends
-on it.)
+unreachable.
 
 ## Scope — what James actually asked for
 

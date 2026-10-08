@@ -39,10 +39,8 @@ loaded "just in case":
 
 `client-guard.md` and `desks-and-icp.md` hold Clarity process stated on calls but not yet in
 Notion. **The last two reference files are deliberately not read on a chase list** — both
-describe paths that have never executed (`enrich`/`source` have no caller yet, Loxo has never
-been connected), so loading them on every sweep costs attention for nothing.
-
-If `clarity-context` is also installed, its shared maps win — but nothing here depends on it.
+describe paths that have not run against Clarity's data yet (`enrich`/`source` have no caller
+yet, `sync` is dry run only), so loading them on every sweep costs attention for nothing.
 
 ---
 
@@ -265,14 +263,17 @@ over-think question four.
 ### PHASE 1: Resolve tools
 
 **Read `reference/tools.json` first.** It maps each capability to the actual MCP tool name in
-the current workspace. (If `clarity-context` is installed, its shared map wins — but this skill
-does not need it.) James, Billy, Marcus and Josh have **Loxo and
-Kondo connected** in their Claude workspaces — that is the target environment, and the exact
-tool names are resolved there, not guessed here.
+the current workspace. James, Billy, Marcus and Josh have **Loxo and Kondo connected** in their
+Claude workspaces. That is the target environment, and the Kondo and Loxo read tools are pinned
+for it. The Loxo names are the ones the other Clarity skills already call: `people_index`,
+`people_show`, `person_events_index`, `companies_index`, `companies_show`, `company_people_index`.
 
 - Name present for this workspace → **call it directly.** No discovery, no search. That is what
   keeps a scheduled run deterministic.
-- Name `null` → discover it once among the connected MCPs, use it, **write it back**.
+- Pinned name not in the tool list → try the capability's `alt_names`, then discover.
+- Name `null` → discover it once among the connected MCPs, use it, and **report the name at the
+  top of the output** so it can be pinned in the next plugin version. The installed skill folder
+  is read-only, so do not try to write it back from a run.
 - Capability marked `required: true` unresolvable → **stop and name it.**
 
 Capabilities this skill needs: `kondo_list_chats`, `kondo_read_chat`, `loxo_find_person`,
@@ -411,9 +412,10 @@ Then set two promotion flags per person:
 
 Kondo returns the LinkedIn profile for every conversation, and Loxo stores `linkedin_url` on
 the person record. Measured against Clarity's live database on 20 Aug 2026: **7,366 of 9,500
-people carry a LinkedIn slug — 77.5 % coverage.** `clarity-spec-loxo` already builds exactly this
-index (`data/loxo_people_index.json`, keyed by slug → Loxo person id), so reuse it rather than
-rebuilding.
+people carry a LinkedIn slug — 77.5 % coverage.** No index ships with the skill. Resolve each
+person through `loxo_find_person` (`people_index` by name, then `people_show` to read the
+`linkedin_url`) and keep a slug → Loxo person id map for the rest of the run, so nobody is
+looked up twice.
 
 Normalise before comparing: strip `https://`, `www.`, the `/in/` prefix, any trailing slash,
 query strings and tracking params, then lower-case. `linkedin.com/in/Daniel-Williams22/?utm=x`
@@ -688,8 +690,9 @@ Two things that stay here because a sweep needs them:
   seen a dry run and approved it. That is the difference between "an AI writes to our CRM
   overnight" and something James can sign off.
 
-**Not currently runnable.** Loxo is unconnected and its tool names are unresolved, so a sweep
-reports "sync not run" rather than silently skipping it.
+**Dry run only for now.** The Loxo read tools are pinned, so matching and the dry-run report work.
+The note-append tool (`loxo_add_note`) is not yet named in `tools.json`, so nothing is written:
+a sweep reports "sync dry run, N notes would be written" rather than silently skipping it.
 
 ### PHASE 8: Output
 
@@ -765,11 +768,11 @@ sync does run unattended, within the fences in the write policy.
 
 ## What still gates a first real run
 
-**Kondo Business tier.** The MCP requires it. Unconfirmed whether Clarity is on it — everything
-here is blocked behind that one answer.
+**Kondo Business tier.** The MCP requires it. James upgraded on 1 Sep 2026 and the sweep ran
+live on his account that day.
 
-**Licences are not a blocker.** Every recruiter has their own Kondo licence (James,
-4 Aug), rolled out via admin settings like Loxo and Lemlist.
+**Seats.** The Kondo team plan held two seats (James, Josh) on 1 Sep, with Billy and Marcus on
+personal accounts. A recruiter without MCP access on their own Kondo account cannot run this.
 
 **The browser extension must be awake.** Kondo's MCP reads through the extension, signed in to
 LinkedIn. A scheduled sweep on a sleeping laptop returns nothing — and unlike the daily brief,
@@ -777,8 +780,11 @@ where LinkedIn is one optional source of five, here it is the only source, so an
 does not degrade, it fails. Either the machines stay on, or this is a skill the recruiter
 triggers at the start of the slot.
 
-**Loxo MCP is unauthenticated** on the dev machine, so the sync path and the client guard have
-never been executed against real data.
+**Loxo tool names are pinned but unproven here.** The read names in `tools.json` come from the
+other Clarity skills, which call them on Clarity's connector every day. From this skill, the
+client guard, tiering and the booked-call cross-check have not yet been run against Clarity's
+data, and the sync path has never written a note. Treat the first tiered run as a test and read
+the client-guard flags with care.
 
 **Nothing has been evaluated to a shipping standard.**
 
