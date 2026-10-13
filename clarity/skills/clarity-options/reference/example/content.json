@@ -2,8 +2,7 @@
   "slug": "example-candidate-options",
   "candidate": {"name": "Alex Morgan", "first_name": "Alex"},
   "recruiter": {"name": "James Ward", "email": "james@clarityr2r.com", "phone": "+1 786 796-5657"},
-  "as_of": "6 October 2026",
-  "intro": "great to speak last week. Here are five specialist recruitment businesses worth a conversation, in the order I think they suit you. You lead learning and development for a life sciences staffing firm in the US, so each one is here because it puts real money and senior people behind L&D.",
+  "as_of": "13 October 2026",
   "companies": [
     {
       "name": "Discover International",
@@ -40,6 +39,9 @@
         {"label": "Global Reach", "text": "450 staff, 200 of them in the US, across London, Bristol, Munich, Berlin, New York, Miami, Austin and Los Angeles."},
         {"label": "Culture With Proof", "text": "Named #1 best recruitment company to work for in London (Best Companies) and Great Place to Work certified."}
       ],
+      "podcasts": [
+        {"guest": "Ben Richardson and Mike Bott", "show": "Recruitment Mentors", "url": "https://www.youtube.com/watch?v=OeZZ2PmjzpM"}
+      ],
       "fit": "L&D here is a leadership function with seats on both sides of the Atlantic, the same UK and US span you cover in your current role. SciPro keeps you in life sciences, with four other brands to stretch into."
     },
     {
@@ -59,6 +61,10 @@
         {"label": "High Productivity", "text": "Average billings of about £500k per head, with several million-dollar billers."},
         {"label": "Pay for Performance", "text": "Uncapped commission of up to 60%, accelerators for top performers and a clear path to equity."}
       ],
+      "podcasts": [
+        {"guest": "Joe Jani", "show": "Recruitment Mentors", "url": "https://www.youtube.com/watch?v=-6rUtTSxxRE"},
+        {"guest": "Joe Jani", "show": "The RAG Podcast", "url": "https://www.youtube.com/watch?v=L4_9WaHliDk"}
+      ],
       "fit": "Fresh private equity money means headcount growth, and the Metric Academy is how they plan to absorb it. Like you, plenty of their people have made the move from the UK to the US, and Metric Bio keeps a life sciences line in the mix."
     },
     {
@@ -76,6 +82,9 @@
         {"label": "Well-Known US Brands", "text": "Computer Futures, Huxley, Progressive and Real Staffing, with about 300 people in the US."},
         {"label": "Scale and Stability", "text": "A global group with a very strong contract business, trading in the US as Specialist Staffing Group."},
         {"label": "Benefits", "text": "A hybrid week of 3 days in the office and 2 at home, strong healthcare and a 401K."}
+      ],
+      "podcasts": [
+        {"guest": "CEO Timo Lehne", "show": "My Duvet Flip", "url": "https://www.youtube.com/watch?v=H6kk-SqgnVY"}
       ],
       "fit": "The largest platform on this list. L&D here reaches about 300 people across four brands in the US, with a new technology platform behind it, and life sciences is the group's biggest US market."
     },

@@ -15,7 +15,7 @@ content.json schema:
   "candidate": {"name": "Jane Doe", "first_name": "Jane"},
   "recruiter": {"name": "...", "email": "...", "phone": "..."},
   "as_of": "6 October 2026",
-  "intro": "Opening paragraph, written to the candidate.",
+  "headline": "Opportunities for Jane",             // optional; this is the default
   "companies": [
     {
       "name": "LHi Group",
@@ -24,16 +24,23 @@ content.json schema:
       "core_markets": "Tech, life sciences, ...",      // table: Core Markets
       "standout": "Six-figure stake for every employee",
       "descriptor": "Employee-Owned Multi-Brand Group", // optional; card line, defaults to type
-      "urls": ["wearelhi.com"],
+      "urls": ["wearelhi.com"],                         // printed bare, linked to https://
       "locations": ["London", "New York", "Miami"],
       "pitch": "Two-sentence lead with the strongest numbers.",
       "bullets": [{"label": "Global Reach", "text": "450 staff, ..."}],
+      "podcasts": [                                     // optional, 0-2, YouTube only
+        {"guest": "Jo Smith", "show": "The Resilient Recruiter",
+         "url": "https://www.youtube.com/watch?v=..."}
+      ],
       "fit": "Why this firm suits this candidate, written to them."
     }
   ],
-  "sources": "wearelhi.com; Hunt Scanlon Media, 27 March 2026; ...",
+  "sources": "wearelhi.com; Hunt Scanlon Media, 27 March 2026; ...",  // not printed, the recruiter's record
   "never_print": ["$180k", "H-1B"]                      // optional; confidential strings
 }
+
+There is no opening paragraph and no sources line. The document goes logo, headline, comparison
+table, cards. "sources" stays required so every run keeps a record of where its facts came from.
 """
 
 import argparse
@@ -41,6 +48,9 @@ import base64
 import json
 import re
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -51,12 +61,32 @@ TAGLINE = "we place recruitment leadership"
 FIT_LABEL = "WHY IT FITS YOU"
 MIN_COMPANIES, MAX_COMPANIES = 2, 6
 MIN_BULLETS, MAX_BULLETS = 3, 6
+MAX_PODCASTS = 2
+WATCH_LABEL = "WATCH"
+YOUTUBE = re.compile(r"^https://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)([\w-]{11})(?:[&?#].*)?$")
 TABLE_FIELDS = ("name", "type", "size", "core_markets", "standout")
 CARD_FIELDS = ("pitch", "bullets", "fit")
 
 
 def esc(s) -> str:
     return str("" if s is None else s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def attr(s) -> str:
+    return esc(s).replace('"', "&quot;")
+
+
+def site_href(url: str) -> str:
+    url = str(url).strip()
+    return url if re.match(r"https?://", url) else f"https://{url}"
+
+
+def site_label(url: str) -> str:
+    return re.sub(r"^https?://(www\.)?", "", str(url).strip()).rstrip("/")
+
+
+def youtube_href(url: str) -> str:
+    return f"https://www.youtube.com/watch?v={YOUTUBE.match(str(url).strip()).group(1)}"
 
 
 def font_faces() -> str:
@@ -87,7 +117,7 @@ def validate(data: dict) -> None:
             errors.append(f"recruiter.{key} is required")
     if not (data.get("candidate") or {}).get("first_name"):
         errors.append("candidate.first_name is required")
-    for key in ("slug", "as_of", "intro", "sources"):
+    for key in ("slug", "sources"):
         if not data.get(key):
             errors.append(f"{key} is required")
 
@@ -105,6 +135,17 @@ def validate(data: dict) -> None:
         for b in bullets:
             if not b.get("label") or not b.get("text"):
                 errors.append(f"{tag}: every bullet needs a label and text")
+        for u in c.get("urls") or []:
+            if re.search(r"\s", str(u).strip()) or "." not in str(u):
+                errors.append(f"{tag}: '{u}' is not a web address")
+        podcasts = c.get("podcasts") or []
+        if len(podcasts) > MAX_PODCASTS:
+            errors.append(f"{tag}: at most {MAX_PODCASTS} podcasts, got {len(podcasts)}")
+        for pod in podcasts:
+            if not pod.get("guest") or not pod.get("show"):
+                errors.append(f"{tag}: every podcast needs a guest and a show")
+            if not YOUTUBE.match(str(pod.get("url") or "").strip()):
+                errors.append(f"{tag}: podcast url must be a YouTube video link, got '{pod.get('url')}'")
     if errors:
         raise SystemExit("content.json is not ready:\n  - " + "\n  - ".join(errors))
 
@@ -129,7 +170,9 @@ def table_block(companies) -> str:
 
 def card_block(c: dict) -> str:
     descriptor = esc(c.get("descriptor") or c["type"])
-    urls = " · ".join(f'<span class="url">{esc(u)}</span>' for u in (c.get("urls") or []))
+    urls = " · ".join(
+        f'<a class="url" href="{attr(site_href(u))}">{esc(site_label(u))}</a>' for u in (c.get("urls") or [])
+    )
     if urls:
         descriptor = f"{descriptor} · {urls}"
     locations = " · ".join(esc(str(loc).upper()) for loc in (c.get("locations") or []))
@@ -137,12 +180,20 @@ def card_block(c: dict) -> str:
     bullets = "\n".join(
         f'        <li><b>{esc(b["label"])}</b> {esc(b["text"])}</li>' for b in c["bullets"]
     )
+    watch = '<span class="sep">·</span>'.join(
+        f'<a href="{attr(youtube_href(pod["url"]))}">{esc(pod["guest"])} on {esc(pod["show"])}</a>'
+        for pod in (c.get("podcasts") or [])
+    )
+    watch_line = (
+        f'      <div class="watch"><span class="label">{WATCH_LABEL}</span>{watch}</div>\n' if watch else ""
+    )
     return (
-        f'    <div class="block card" data-name="{esc(c["name"])}">\n'
+        f'    <div class="block card" data-name="{attr(c["name"])}">\n'
         f'      <h2>{esc(c["name"])}</h2>\n'
         f'      <div class="descriptor">{descriptor}</div>{locations_line}\n'
         f'      <p class="pitch">{esc(c["pitch"])}</p>\n'
         f"      <ul>\n{bullets}\n      </ul>\n"
+        f"{watch_line}"
         f'      <div class="fit"><div class="label">{FIT_LABEL}</div><p>{esc(c["fit"])}</p></div>\n'
         "    </div>"
     )
@@ -151,14 +202,12 @@ def card_block(c: dict) -> str:
 def build_html(data: dict) -> str:
     recruiter = data["recruiter"]
     companies = data["companies"]
+    first_name = esc(data["candidate"]["first_name"])
+    headline = esc(data["headline"]) if data.get("headline") else f"Opportunities for <span>{first_name}</span>"
     blocks = [
-        '    <div class="block intro" data-name="intro">'
-        f'<span class="hello">{esc(data["candidate"]["first_name"])},</span> {esc(data["intro"])}</div>',
+        f'    <div class="block headline" data-name="headline"><h1>{headline}</h1></div>',
         table_block(companies),
         *[card_block(c) for c in companies],
-        '    <div class="block sources" data-name="sources">'
-        f'Sources: {esc(data["sources"])}. Other figures come from Clarity R2R\'s market conversations '
-        f'with each business. Confirm them at interview stage. Correct as of {esc(data["as_of"])}.</div>',
     ]
     mapping = {
         "{{FONT_FACES}}": font_faces(),
@@ -198,6 +247,8 @@ def render(html_path: Path, pdf_path: Path, never_print) -> dict:
             root = page.locator("html")
             pages = int(root.get_attribute("data-pages") or 0)
             oversize = [n for n in (root.get_attribute("data-oversize") or "").split("|") if n]
+            fill = [int(n) for n in (root.get_attribute("data-fill") or "").split("|") if n]
+            links = page.locator("a[href]").count()
             text = page.inner_text("body")
             clipped = page.evaluate(
                 "() => [...document.querySelectorAll('.page .body')]"
@@ -215,7 +266,41 @@ def render(html_path: Path, pdf_path: Path, never_print) -> dict:
 
     leaks = [s for s in (never_print or []) if s and s.lower() in text.lower()]
     non_usd = sorted(set(re.findall(r"[£€]\s?[\d.,]+\s?[kmbn]*", text)))
-    return {"pages": pages, "oversize": oversize, "clipped": clipped, "leaks": leaks, "non_usd": non_usd}
+    return {
+        "pages": pages, "oversize": oversize, "clipped": clipped, "leaks": leaks, "non_usd": non_usd,
+        "fill": fill, "links": links,
+    }
+
+
+def check_podcasts(companies) -> tuple:
+    """Ask YouTube what each linked video really is. A dead link fails, an odd match warns."""
+    dead, warnings, seen = [], [], []
+    for c in companies:
+        for pod in c.get("podcasts") or []:
+            url = youtube_href(pod["url"])
+            api = "https://www.youtube.com/oembed?format=json&url=" + urllib.parse.quote(url, safe="")
+            try:
+                with urllib.request.urlopen(api, timeout=10) as r:
+                    meta = json.loads(r.read().decode("utf-8"))
+            except urllib.error.HTTPError as e:
+                if e.code in (400, 404):
+                    dead.append(f'{c["name"]}: {url} is not a video on YouTube')
+                else:
+                    warnings.append(f'{c["name"]}: could not confirm {url} (HTTP {e.code}), open it by hand')
+                continue
+            except Exception:
+                warnings.append(f'{c["name"]}: could not reach YouTube to confirm {url}, open it by hand')
+                continue
+            title, channel = meta.get("title", ""), meta.get("author_name", "")
+            seen.append(f'{c["name"]}: "{title}" on the channel {channel}')
+            haystack = f"{title} {channel}".lower()
+            surname = str(pod["guest"]).split()[-1].lower()
+            firm = str(c["name"]).split()[0].lower()
+            if surname not in haystack and firm not in haystack:
+                warnings.append(
+                    f'{c["name"]}: the video title names neither {pod["guest"]} nor the firm, check it is the right one'
+                )
+    return dead, warnings, seen
 
 
 def main() -> None:
@@ -234,7 +319,18 @@ def main() -> None:
     html_path.write_text(build_html(data), encoding="utf-8")
 
     result = render(html_path, pdf_path, data.get("never_print"))
-    print(f"OK {pdf_path} ({result['pages']} pages, {len(data['companies'])} companies)")
+    print(
+        f"OK {pdf_path} ({result['pages']} pages, {len(data['companies'])} companies, "
+        f"{result['links']} links, page fill {', '.join(f'{n}%' for n in result['fill'])})"
+    )
+    if data.get("intro"):
+        print("WARN intro is no longer printed. Put that wording in the cover email instead.")
+
+    dead, pod_warnings, seen = check_podcasts(data["companies"])
+    for line in seen:
+        print(f"VIDEO {line}")
+    for line in pod_warnings:
+        print(f"WARN {line}")
 
     if result["non_usd"]:
         print(f"WARN non-USD figures, convert or confirm for a US reader: {', '.join(result['non_usd'])}")
@@ -246,6 +342,9 @@ def main() -> None:
     if result["clipped"] and not result["oversize"]:
         failed = True
         print(f"FAIL content clipped on page(s): {', '.join(map(str, result['clipped']))}")
+    if dead:
+        failed = True
+        print("FAIL podcast link: " + "; ".join(dead))
     if result["leaks"]:
         failed = True
         print(f"FAIL confidential text in the document: {', '.join(result['leaks'])}")
