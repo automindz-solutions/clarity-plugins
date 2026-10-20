@@ -22,7 +22,7 @@ The skills then appear when you type `/`:
 | `clarity-spec-market` | Open-market firms to spec a candidate into |
 | `clarity-frontsheet` | Branded one-page candidate cover sheet |
 | `clarity-options` | Options document for a candidate, with why each firm fits them |
-| `clarity-deck` | Branded client deck for a retained search, PowerPoint and PDF, full or anonymised |
+| `clarity-deck` | Client deck for a retained search as an editable Claude Slides deck on the Clarity design system, full or anonymised |
 | `clarity-bd` | Net-new BD contacts from eight market signals |
 | `clarity-network` | Chase list from the LinkedIn inbox via Kondo |
 | `clarity-house-style` | Brand colours, type and capitalisation rules |

@@ -67,5 +67,8 @@ function check(content) {
   const label = anonymised ? (content.client.anonymisedName || "Confidential Client") : content.client.name;
   const out = path.join(outdir, `Clarity R2R x ${label}.pptx`);
   await deck.write(out);
+  // Sources stay with the recruiter, next to the deck, not inside it.
+  const src = deck.sources.map((x, i) => `## ${i + 1}. ${x.title}\n\n` + x.sources.map((l) => `- ${l}`).join("\n")).join("\n\n");
+  fs.writeFileSync(out.replace(/\.pptx$/, " (sources).md"), `# Sources: ${path.basename(out)}\n\n${src}\n`);
   console.log(out);
 })().catch((e) => { console.error(e.message || e); process.exit(1); });

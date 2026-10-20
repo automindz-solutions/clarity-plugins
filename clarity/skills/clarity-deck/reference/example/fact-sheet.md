@@ -14,6 +14,30 @@ search. The original Canva deck was not used as a source. Hyreflow spend: 0.65 c
 | LinkedIn via Hyreflow | Alex Woodhead: Cubiq 2013 to 2019, Strativ co-founder 2019 to 2023, Apera from Jan 2024 |
 | Loxo company record | Current Client, offices Leeds, Manchester, Los Angeles |
 
+## Facts
+
+Every figure that can appear on a slide, written exactly as the slide will show it.
+`check_slides.js --facts` warns on any figure in the deck that is not in this table.
+
+| Fact | Value | Source |
+|---|---|---|
+| Headcount today | 57 | apera.co team page, 20 Oct 2026 |
+| Headcount, start of 2026 | 43 (42 to 43) | Loxo intake note, 2 Feb 2026 |
+| Headcount, spring 2025 | 20 | Loxo note, 6 Mar 2025 |
+| Headcount target, end of 2026 | 60 | Loxo intake note, 2 Feb 2026 |
+| Headcount target, two to three years | 100 | Loxo intake note, 2 Feb 2026 |
+| Budget for 2026 | £15m | Loxo intake note, 2 Feb 2026 ("nearly £15 million") |
+| EBITDA forecast for 2026 | £5m | Loxo intake note, 2 Feb 2026 ("approximately £5 million") |
+| Work with venture-backed businesses | 99% | Loxo note, 9 Jun 2026 |
+| Largest client RPO, guaranteed | $3m | Loxo note, 6 Mar 2025 |
+| Minimum fee on RPO work | 20% | Loxo note, 6 Mar 2025 |
+| Executive search fee | 30% of total comp | Loxo note, 14 Apr 2026 |
+| Share of a client's TA spend targeted | 100% | Loxo note, 6 Mar 2025 |
+| Companies mapped per niche | 10 to 20 | Loxo note, 6 Mar 2025 |
+| Sales organisation target | 250 to 500 people in two to three years | Loxo intake note, 2 Feb 2026 |
+| Base for an LA-based C-suite hire | $300k+ | Loxo intake note, 2 Feb 2026 |
+| Founder career | Cubiq 2013 to 2019, Strativ 2019 to 2023, Apera Jan 2024 | LinkedIn via Hyreflow |
+
 ## Conflicts for the recruiter to confirm
 
 1. **Leadership titles.** Website: Melissa Holden, Michael Bruning, Jonathan Birbeck are VPs.

@@ -1,0 +1,20 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-10-20T19:55:00Z" },
+  "lists": "css",
+  "title": "Clarity R2R x Apera",
+  "cover": "cover",
+  "order": ["cover", "intro", "team", "overview", "code", "market", "model", "why", "role", "profile", "nice", "location", "contact"],
+  "sections": {
+    "s1": { "description": "Apera, its founder and its leadership team", "start": "cover" },
+    "s2": { "description": "The business: numbers, values, markets and model", "start": "overview" },
+    "s3": { "description": "The Chief Revenue Officer role and the profile", "start": "role" },
+    "s4": { "description": "Who to talk to at Clarity", "start": "contact" }
+  },
+  "faces": {
+    "poppins": { "family": "Poppins", "href": "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" }
+  },
+  "designSystems": [
+    { "title": "Clarity R2R", "namespace": "clarity", "artifact": "https://claude.ai/artifact/9xxTc2Mz1cKgK7dj1qtbo7", "version": "1792511258-dbdc", "copiedAt": "2026-10-20T19:55:00Z" }
+  ]
+}

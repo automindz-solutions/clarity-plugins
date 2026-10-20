@@ -73,6 +73,7 @@ class ClarityDeck {
     this.C = this.pres.SchemeColor;
     this.client = client;
     this.anonymised = anonymised;
+    this.sources = [];
     this.defineLayouts();
   }
 
@@ -141,7 +142,8 @@ class ClarityDeck {
   slide(master, title, sources) {
     const s = this.pres.addSlide({ masterName: master });
     if (title) s.addText(title, { placeholder: "title" });
-    if (sources && sources.length) s.addNotes("Sources:\n" + sources.map((x) => "- " + x).join("\n"));
+    // Sources are collected for a separate file, never put in speaker notes: decks go to candidates.
+    if (sources && sources.length) this.sources.push({ title: title || master, sources });
     return s;
   }
 

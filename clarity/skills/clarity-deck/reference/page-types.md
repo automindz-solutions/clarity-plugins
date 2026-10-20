@@ -17,8 +17,8 @@ A deck is one `content.json`. Copy the shape of `reference/example/content.json`
   (`skill:assets/recruiters/billy.jpg`).
 - `client.logo` must already be white on transparent (`prep_assets.js logo ... --white`).
   The aspect ratio is read from the file.
-- **Every slide needs `sources`**: one line per source, "System: what, date". They become the
-  speaker notes. The build stops without them.
+- **Every slide needs `sources`**: one line per source, "System: what, date". They go to a
+  `(sources).md` file next to the deck, never into speaker notes. The build stops without them.
 - Copy rules the build enforces: no em dashes, no placeholder text, and in an anonymised build
   the client's name may not appear anywhere in the slides.
 
