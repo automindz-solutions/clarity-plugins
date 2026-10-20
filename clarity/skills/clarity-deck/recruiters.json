@@ -1,0 +1,27 @@
+{
+  "james": {
+    "name": "James Ward",
+    "email": "james@clarityr2r.com",
+    "phone": "+1 786 796 5657",
+    "photo": ""
+  },
+  "marcus": {
+    "name": "Marcus Davies",
+    "email": "marcus@clarityr2r.com",
+    "phone": "+1 786 673 4942",
+    "photo": ""
+  },
+  "josh": {
+    "name": "Josh Haydock",
+    "email": "josh@clarityr2r.com",
+    "phone": "+1 786 563 4543",
+    "photo": ""
+  },
+  "billy": {
+    "name": "Billy Greenall",
+    "email": "billy@clarityr2r.com",
+    "phone": "+1 786 481 1427",
+    "photo": "skill:assets/recruiters/billy.jpg"
+  },
+  "_note": "The contact card needs a square headshot. Only Billy's is on file. For anyone else, ask for a photo on the run, run it through prep_assets.js photo, and save it to assets/recruiters/<key>.jpg so the next run has it."
+}

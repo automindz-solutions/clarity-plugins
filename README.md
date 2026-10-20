@@ -1,6 +1,6 @@
 # Clarity R2R plugin marketplace
 
-One install that gives every Clarity recruiter the same ten skills in Claude (Cowork, Desktop or
+One install that gives every Clarity recruiter the same eleven skills in Claude (Cowork, Desktop or
 Code). It replaces uploading `.skill` files one by one.
 
 ## Install (each person, once)
@@ -22,6 +22,7 @@ The skills then appear when you type `/`:
 | `clarity-spec-market` | Open-market firms to spec a candidate into |
 | `clarity-frontsheet` | Branded one-page candidate cover sheet |
 | `clarity-options` | Options document for a candidate, with why each firm fits them |
+| `clarity-deck` | Branded client deck for a retained search, PowerPoint and PDF, full or anonymised |
 | `clarity-bd` | Net-new BD contacts from eight market signals |
 | `clarity-network` | Chase list from the LinkedIn inbox via Kondo |
 | `clarity-house-style` | Brand colours, type and capitalisation rules |

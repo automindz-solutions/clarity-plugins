@@ -1,0 +1,380 @@
+{
+  "client": {
+    "name": "Apera",
+    "logo": "assets/apera-mark-t.png",
+    "anonymisedName": "Founder-Led Aerospace Staffing Firm"
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "role": "Chief Revenue Officer",
+      "location": "Los Angeles, California",
+      "sources": [
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026",
+        "Loxo: CoRecruit retained-search update, 17 Mar 2026"
+      ]
+    },
+    {
+      "type": "profileIntro",
+      "title": "Introduction",
+      "paragraphs": [
+        "Apera is a founder-led specialist staffing business recruiting for Aerospace, Defense, Space, Automotive, Clean Energy and AI & Robotics clients.",
+        "Founder and CEO Alex Woodhead spent six years as a Director at Cubiq Recruitment, then co-founded Strativ Group in 2019. He left Strativ in 2023 and launched Apera in January 2024.",
+        "Apera runs a full-service model across contract, permanent, executive search and embedded RPO, taking clients from transactional hiring to subscription RPO partnerships.",
+        "Alex has relocated to Los Angeles to lead the US build, where Apera's client base is concentrated."
+      ],
+      "person": {
+        "name": "Alex Woodhead",
+        "title": "Founder & CEO",
+        "photo": "assets/alex.jpg"
+      },
+      "sources": [
+        "apera.co navigation (Technologies), checked 20 Oct 2026",
+        "LinkedIn via Hyreflow: Alexander Woodhead profile, 20 Oct 2026",
+        "Loxo: CoRecruit note on Alex Woodhead, 6 Mar 2025",
+        "Loxo: CoRecruit retained-search update, 17 Mar 2026",
+        "apera.co/pages/about/the-team, checked 20 Oct 2026 (57 people listed)"
+      ]
+    },
+    {
+      "type": "teamGrid",
+      "title": "Leadership Team",
+      "intro": "The team this hire joins. The Head of Talent and Head of Performance will report into the role.",
+      "people": [
+        {
+          "name": "Alex Woodhead",
+          "title": "Founder & CEO",
+          "photo": "assets/alex.jpg"
+        },
+        {
+          "name": "Isabella Ogden",
+          "title": "CFO",
+          "photo": "assets/isabella.jpg"
+        },
+        {
+          "name": "James Woodhead",
+          "title": "Chief Marketing Officer",
+          "photo": "assets/james-w.jpg"
+        },
+        {
+          "name": "Melissa Holden",
+          "title": "VP, Defense",
+          "photo": "assets/melissa.jpg"
+        },
+        {
+          "name": "Michael Bruning",
+          "title": "VP, Space",
+          "photo": "assets/michael.jpg"
+        },
+        {
+          "name": "Jonathan Birbeck",
+          "title": "VP, Aerospace",
+          "photo": "assets/jonathan.jpg"
+        },
+        {
+          "name": "Cameron Matthews",
+          "title": "Head of Talent",
+          "photo": "assets/cameron.jpg",
+          "tag": "Reports to this role"
+        },
+        {
+          "name": "Abby Child",
+          "title": "Head of Performance",
+          "photo": "assets/abby.jpg",
+          "tag": "Reports to this role"
+        }
+      ],
+      "sources": [
+        "apera.co/pages/about/the-team, checked 20 Oct 2026 (57 people listed)",
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026"
+      ]
+    },
+    {
+      "type": "stats",
+      "title": "Company Overview",
+      "stats": [
+        {
+          "value": "57",
+          "label": "People on the team today"
+        },
+        {
+          "value": "60",
+          "label": "Headcount target for end of 2026"
+        },
+        {
+          "value": "£15m",
+          "label": "Budget for 2026"
+        },
+        {
+          "value": "£5m",
+          "label": "EBITDA forecast for 2026"
+        }
+      ],
+      "bullets": [
+        "Grew from around 20 people in spring 2025 to 43 at the start of 2026 and 57 today, across Manchester, Leeds, London and Los Angeles.",
+        "Targeting 100 people within the next two to three years.",
+        "Runs on Bullhorn with the full automation suite; the next step is getting more value out of its data."
+      ],
+      "sources": [
+        "apera.co/pages/about/the-team, checked 20 Oct 2026 (57 people listed)",
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026",
+        "Loxo: CoRecruit note on Alex Woodhead, 6 Mar 2025",
+        "Loxo: CoRecruit retained-search update, 9 Jun 2026",
+        "Loxo company record: Apera, Current Client, offices Leeds, Manchester, Los Angeles"
+      ]
+    },
+    {
+      "type": "statementsAndPills",
+      "title": "The Apera Code",
+      "statements": [
+        {
+          "label": "Vision",
+          "text": "Engineering a better future through unlocking the potential of people and technology."
+        },
+        {
+          "label": "Mission",
+          "text": "We solve the complex engineering problems of today to build a better tomorrow, on this planet and beyond."
+        }
+      ],
+      "pillsTitle": "Values",
+      "pills": [
+        "Best in the World",
+        "Inspire Ingenuity",
+        "Relationship Led",
+        "Do the Right Thing"
+      ],
+      "sources": [
+        "apera.co/pages/about/the-code, checked 20 Oct 2026"
+      ]
+    },
+    {
+      "type": "iconCards",
+      "title": "Market Position",
+      "intro": "99% of Apera's work is with venture-backed businesses. Los Angeles is the US hub because the client base sits across California: LA, San Francisco and San Diego.",
+      "cards": [
+        {
+          "icon": "LuPlane",
+          "title": "Aerospace",
+          "text": "Core business unit, led by VP Jonathan Birbeck."
+        },
+        {
+          "icon": "LuShield",
+          "title": "Defense",
+          "text": "Core business unit, led by VP Melissa Holden."
+        },
+        {
+          "icon": "LuRocket",
+          "title": "Space",
+          "text": "Core business unit, led by VP Michael Bruning."
+        },
+        {
+          "icon": "LuBot",
+          "title": "AI & Robotics",
+          "text": "Next expansion area, starting with robotics and automation."
+        },
+        {
+          "icon": "LuCar",
+          "title": "Automotive",
+          "text": "Expansion target: autonomous cars and trucks."
+        },
+        {
+          "icon": "LuZap",
+          "title": "Clean Energy",
+          "text": "Listed as a core technology market on apera.co."
+        }
+      ],
+      "sources": [
+        "Loxo: CoRecruit retained-search update, 9 Jun 2026",
+        "Loxo: CoRecruit note on Alex Woodhead, 6 Mar 2025",
+        "apera.co navigation (Technologies), checked 20 Oct 2026",
+        "apera.co/pages/about/the-team, checked 20 Oct 2026 (57 people listed)"
+      ]
+    },
+    {
+      "type": "stats",
+      "title": "Business Model",
+      "stats": [
+        {
+          "value": "$3m",
+          "label": "Largest client RPO, guaranteed"
+        },
+        {
+          "value": "20%",
+          "label": "Minimum fee on RPO work"
+        },
+        {
+          "value": "30%",
+          "label": "Of total comp on VP and C-suite search"
+        }
+      ],
+      "bullets": [
+        "Embedded RPOs billed as a monthly subscription, with the goal of owning 100% of a client's talent acquisition spend.",
+        "Sales motion: map the top 10 to 20 companies in a niche, then win them across RPO, permanent, contract and executive search.",
+        "Demand is not the constraint. The priority is operational rigor to deliver on the work already won, which is exactly what this hire owns."
+      ],
+      "sources": [
+        "Loxo: CoRecruit note on Alex Woodhead, 6 Mar 2025",
+        "Loxo: CoRecruit retained-search update, 14 Apr 2026",
+        "Loxo: CoRecruit retained-search update, 9 Jun 2026"
+      ]
+    },
+    {
+      "type": "bullets",
+      "title": "Why Apera?",
+      "iconName": "LuCheck",
+      "items": [
+        "A founder who has done it before: Director at Cubiq, co-founder of Strativ Group, now building Apera.",
+        "Fast growth: from 43 to 57 people during 2026, with 60 targeted by year end and 100 in two to three years.",
+        "A multi-service model anchored in subscription RPO revenue, not one-off fees.",
+        "Technical, venture-backed markets: aerospace, defense and space today, robotics and AI hardware next.",
+        "A seat at the top table with significant equity in a business built to scale.",
+        "A clear code: relationship led, do the right thing, best in the world."
+      ],
+      "sources": [
+        "LinkedIn via Hyreflow: Alexander Woodhead profile, 20 Oct 2026",
+        "apera.co/pages/about/the-team, checked 20 Oct 2026 (57 people listed)",
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026",
+        "Loxo: CoRecruit note on Alex Woodhead, 6 Mar 2025",
+        "Loxo: CoRecruit retained-search update, 9 Jun 2026",
+        "apera.co/pages/about/the-code, checked 20 Oct 2026"
+      ]
+    },
+    {
+      "type": "bullets",
+      "title": "The Role",
+      "iconName": "LuChevronRight",
+      "intro": "Apera is hiring a Chief Revenue Officer to run the revenue engine alongside Alex Woodhead.",
+      "items": [
+        "C-suite or VP level. Titles in scope include CRO, CCO, or VP of Revenue Operations or Commercial; a VP hire is expected to grow into the C-suite.",
+        "Owns front-end operations across the recruitment and sales organisation, not back office.",
+        "Reports to Alex Woodhead. The Head of Talent and Head of Performance report in; sales MDs and leaders report to both.",
+        "Alex focuses on strategy, growth, hiring and sales. This hire runs the operation and the team.",
+        "Built to lead a sales organisation projected to reach 250 to 500 people in two to three years.",
+        "Open compensation for the right person: $300k+ base for an LA-based C-suite hire, bonus on company and personal performance, an extra layer if fee-earning, and significant equity."
+      ],
+      "sources": [
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026"
+      ]
+    },
+    {
+      "type": "labelList",
+      "title": "The Profile",
+      "subtitle": "Non-Negotiable Requirements",
+      "columns": 2,
+      "fontSize": 15,
+      "items": [
+        {
+          "label": "Data and Process Driven",
+          "text": "Lives in the CRM (Bullhorn) and uses AI to make the team more efficient."
+        },
+        {
+          "label": "Strong Manager",
+          "text": "Leads from the front, not from behind a desk."
+        },
+        {
+          "label": "Drives Accountability",
+          "text": "Owns metrics, KPIs and operating standards, with emotional intelligence."
+        },
+        {
+          "label": "System Builder",
+          "text": "Enjoys building and running systems and processes, and is excited by data."
+        },
+        {
+          "label": "Relentless Work Ethic",
+          "text": "Thrives at the pace of a hyper-growth business."
+        },
+        {
+          "label": "Executive Presence",
+          "text": "Earns respect immediately, with gravitas and a record of scaling success."
+        },
+        {
+          "label": "Ambidexterity",
+          "text": "Creates structure from ambiguity, sees problems early, acts without being told."
+        },
+        {
+          "label": "Growth Potential",
+          "text": "Capable of leading a 250 to 500 person sales organisation."
+        }
+      ],
+      "sources": [
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026"
+      ]
+    },
+    {
+      "type": "labelList",
+      "title": "The Profile",
+      "subtitle": "Desirable Attributes",
+      "columns": 1,
+      "fontSize": 16,
+      "items": [
+        {
+          "label": "International Experience",
+          "text": "Has led teams across more than one country."
+        },
+        {
+          "label": "Diverse Recruitment Experience",
+          "text": "Executive search, permanent, contract, MSP and RPO, with a definite emphasis on contract."
+        },
+        {
+          "label": "Fee-Generating",
+          "text": "Ideally wins clients and business to pass to the team; not a strict requirement."
+        },
+        {
+          "label": "Market Knowledge",
+          "text": "Aerospace, defense or space, or adjacent STEM markets such as AI software, cyber, med-tech and life sciences."
+        },
+        {
+          "label": "Number Two Profile",
+          "text": "A number two in a hyper-growth business, ready to step up."
+        }
+      ],
+      "sources": [
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026",
+        "Loxo: CoRecruit retained-search update, 14 Apr 2026"
+      ]
+    },
+    {
+      "type": "iconCards",
+      "title": "Location and Relocation",
+      "perRow": 2,
+      "cards": [
+        {
+          "icon": "LuMapPin",
+          "title": "Los Angeles",
+          "text": "Strong preference for someone already in LA or willing to relocate, where the clients and the US build are."
+        },
+        {
+          "icon": "LuMapPin",
+          "title": "Manchester",
+          "text": "An exceptional UK candidate could relocate to Manchester instead."
+        },
+        {
+          "icon": "LuBuilding2",
+          "title": "Office Presence",
+          "text": "Relocation to LA or Manchester is non-negotiable. This is a high-influence role that needs to be in the office."
+        },
+        {
+          "icon": "LuGlobe",
+          "title": "Other US Cities",
+          "text": "Only for a revenue generator who can open a new office and business line there; not for a pure operations hire."
+        }
+      ],
+      "sources": [
+        "Loxo: CoRecruit retained-search intake notes on Alex Woodhead, 2 Feb 2026",
+        "Loxo: CoRecruit retained-search update, 17 Mar 2026"
+      ]
+    },
+    {
+      "type": "contact",
+      "recruiter": {
+        "name": "Billy Greenall",
+        "phone": "+1 786 481 1427",
+        "email": "billy@clarityr2r.com",
+        "photo": "skill:assets/recruiters/billy.jpg"
+      },
+      "sources": [
+        "Clarity recruiter details (Billy Greenall)"
+      ]
+    }
+  ]
+}
