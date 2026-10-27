@@ -45,8 +45,56 @@ Pages worth scraping, usually 3 to 5 per deck:
 | Home and navigation | Markets, services, offices |
 | Services or capabilities | The service model |
 
-For the logo, ask Firecrawl for `formats: ["html"]` on the home page and look for the `<svg>` or
-`<img>` inside the header. Failing that, ask the recruiter to drop in the logo file.
+**Firecrawl strips the header by default** (`only_main_content` is on), and the logo lives in the
+header. A plain markdown scrape of the home page never contains it. That is why early runs came back
+with no logo. Get images with the two scrapes below, not from the markdown.
+
+## 2a. Logo and headshots (tested on SThree and Apera, 27 Oct 2026)
+
+**Logo: scrape the header only** (0.1 credits, about 2,000 characters back):
+
+```
+hyreflow_tools_execute(tool: "firecrawl", method: "scrape",
+  payload: {url: "<home page>", formats: ["html"], only_main_content: false,
+            includeTags: ["header", "link[rel*=icon]"], excludeTags: ["nav", "ul", "script", "style"]})
+```
+
+Never ask for the whole page as HTML: a full home page is 80,000+ characters and floods the session.
+
+Pick the logo in this order:
+
+1. The `<img>` inside `<header>` whose class, alt or file name says logo (`header__logo`,
+   `alt="SThree Logo"`). Usually an SVG. Use its `src` as is.
+2. An inline `<svg>` inside the header link to the home page (Apera does this). Copy the whole
+   `<svg>...</svg>` into `decks/<run>/assets/client-logo.svg` and run `prep_assets.js` on that file.
+3. `metadata.og:image` from the same result, if its file name says logo. Often a square social card
+   with the logo on a coloured box; check how it looks before using it.
+4. `apple-touch-icon`: the brand mark without the wordmark. Last resort, small.
+
+**Headshots: scrape the team page for images only** (0.1 credits):
+
+```
+hyreflow_tools_execute(tool: "firecrawl", method: "scrape",
+  payload: {url: "<team page>", formats: ["html"], only_main_content: false, includeTags: ["img"]})
+```
+
+This returns one `<img>` per person with the name in `alt` (Apera: 57 headshots, every one a real
+URL). Match people by first name plus the team page's text from the markdown scrape. When `src` is
+a tiny `data:` placeholder, the real image is in `data-src`, `data-lazy-src` or the largest
+`srcset` entry. If the team page has no photos, use LinkedIn photo URLs from `linkedin_profile`.
+
+**Download through `prep_assets.js`**, which sends browser headers (some image hosts refuse
+anything else) and says why a download failed:
+
+| Exit | Message | Do this |
+|---|---|---|
+| 0 | path and size | Done |
+| 2 | `NETWORK_BLOCKED` | This session cannot fetch from that host. Stop trying and **add it to the image ask at Gate 1** |
+| 3 | `NOT_AN_IMAGE` | You passed a page URL. Use the image's own URL |
+| 4 | `BLANK` | Try the next logo in the order above |
+
+Test one image first with `prep_assets.js check <image url>`, never with a page URL: SThree blocks
+page fetches (403) but serves its images freely.
 
 ## 3. LinkedIn via Hyreflow (a few credits a deck)
 
@@ -63,7 +111,8 @@ linkedin_profile   {linkedin_url}                                               
 - Enrichment titles lag. Website wins on titles.
 
 Follow the credit gate in `../clarity-options/reference/hyreflow.md`. A deck usually costs 1 to 3
-credits: one people search, two or three profiles, three to five page scrapes.
+credits: one people search, two or three profiles, three to five page scrapes, plus the two image
+scrapes in §2a.
 
 ## 4. Web search (free)
 

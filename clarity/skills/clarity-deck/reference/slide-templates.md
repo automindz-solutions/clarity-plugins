@@ -23,6 +23,15 @@ Rules that apply to every slide:
 - **No `<aside>`.** Speaker notes are readable by anyone with the link. Sources live on the fact sheet.
 - Apostrophes are typographic (`’`). `&` is written `&amp;`. No em dashes.
 - An anonymised deck drops the `{{CLIENT_LOGO}}` image from every header and from the cover.
+- **No client logo** (the recruiter skipped it at Gate 1): drop the `{{CLIENT_LOGO}}` image the same
+  way. Never leave a broken image or an empty box.
+- **No photo for a person** (skipped at Gate 1): replace that `<img>` with an initials circle the
+  same size. Founder slide 400px with `font-size:140px`, team grid 150px with `font-size:52px`,
+  contact card 420px with `font-size:150px`:
+
+  ```html
+  <div style="width:150px;height:150px;border-radius:50%;background:#251C05;border:3px solid #9E7B0D;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:700;color:#FFC500">JS</div>
+  ```
 
 ---
 

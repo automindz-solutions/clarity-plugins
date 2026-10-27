@@ -20,7 +20,7 @@ as PowerPoint or PDF.
 | `design-system/` | The Clarity R2R design system: tokens, brand book, cover, logo and 30 gold icons. |
 | `scripts/stage_design_system.js` | Prepares the design system for publishing (Phase 0, once per workspace). |
 | `scripts/check_slides.js` | Checks the slide files before every publish. |
-| `scripts/prep_assets.js` | Headshots to 600px squares; client logos trimmed and turned white. |
+| `scripts/prep_assets.js` | Downloads with browser headers; headshots to 600px squares; client logos trimmed and turned white; `check` tests an image download. |
 | `recruiters.json` | Contact card details and headshots per recruiter. |
 | `scripts/build.js`, `render.sh`, `lib/`, `reference/page-types.md` | The PowerPoint fallback (Phase F). |
 
@@ -73,8 +73,14 @@ Ask for whatever is missing, then confirm in one line before pulling anything.
    empty, ask for a headshot.
 3. **Full or anonymised.** Default is full. Anonymised is a second deck, see Phase 6.
 4. **Anything they have from the client:** their deck, brochure, commission plan, benefits.
+5. **The client's logo, now.** Ask in plain words: *"If you have the client's logo, drag it into
+   this chat now (PNG or SVG, a transparent background is best). Same for any headshots you want
+   used. If not, say skip and I'll pull them from their website."* A client's own deck counts: it
+   usually has the logo and the leadership photos in it.
 
-Make a run folder in this session's folder: `decks/<client-slug>-<role-slug>/`.
+Make a run folder in this session's folder: `decks/<client-slug>-<role-slug>/`. Save anything they
+dropped in to `decks/<run>/assets/` straight away, named `client-logo.<ext>` and `<first-last>.<ext>`.
+Files the recruiter gives you always beat the website.
 
 ## PHASE 2: Gather (read-only)
 
@@ -82,6 +88,13 @@ Follow `reference/sources.md` in this order: Loxo (the company, the job, the cli
 every CoRecruit note on them), the client's website via Hyreflow Firecrawl, LinkedIn via Hyreflow
 (credit gate first; usually 1 to 3 credits a deck), web search, then any collateral. Keep every fact
 with its source and date as you go.
+
+**Images are part of Gather, not the build.** For anything the recruiter did not drop in, follow
+`reference/sources.md` §2a: one header-only scrape for the logo, one image-only scrape of the team
+page for headshots. Then run `prep_assets.js` on each one **now**, into `decks/<run>/assets/`, so you
+know before Gate 1 what worked. On the first `NETWORK_BLOCKED`, stop downloading and list the rest
+as missing. Never ask for the whole page as HTML.
+If `prep_assets.js` says `Cannot find module 'sharp'`, run the `npm install` line from Phase F once.
 
 ## GATE 1: The fact sheet (hard stop)
 
@@ -95,9 +108,16 @@ Write `decks/<run>/fact-sheet.md` and show it. Same shape as `reference/example/
   key clients usually need the recruiter.
 - **Left out on purpose**: anything excluded under rule 3, and anything that looks mis-transcribed.
 - **Is the role still live?** If later notes or the website suggest it has been filled, say so.
+- **Images**: one line each for the client logo, every person who will appear on a slide, and the
+  recruiter: ready (and from where) or missing (and why: not on the site, download blocked, blank).
 
-Facts the recruiter gives you go in the table as "Recruiter, <date>". Do not continue until they
-say go.
+Facts the recruiter gives you go in the table as "Recruiter, <date>".
+
+If any image is missing, ask for all of them **in one message** at this gate: *"I couldn't get
+these from the website: the Acme logo, photos of Jane Smith and Tom Lee. Drag them into the chat if
+you have them, or say skip and I'll leave the logo off and use initials."* Skipped is fine: drop
+the logo from the headers and cover, and use the person's initials in a gold circle instead of a
+photo. Do not continue until they say go.
 
 ## GATE 2: The outline (hard stop)
 
@@ -119,11 +139,11 @@ optional slides when the material exists. Wait for approval or changes.
 2. **Assets into the deck:**
    - Copy the Clarity logo and the icons you need from the system: `publish`, `url` = the deck,
      `asset: true`, `from_url` = the system, `asset_ids` from its README (at most 10 a call).
-   - Prepare the client's logo and the headshots in the run folder, then upload them to the deck:
-     ```bash
-     node <skill>/scripts/prep_assets.js logo "<logo url or file>" decks/<run>/assets/client-logo.png --white
-     node <skill>/scripts/prep_assets.js photo "<headshot url>" decks/<run>/assets/<first-last>.jpg
-     ```
+   - Upload the client logo and the headshots already prepared in `decks/<run>/assets/` during
+     Phase 2 (`prep_assets.js logo ... --white` for the logo, `photo` for headshots; see
+     `reference/sources.md` §2a). **Never stop the build to ask for a file.** Everything was settled
+     at Gate 1: what is missing now gets the skip treatment in `reference/slide-templates.md` (no logo,
+     initials circle).
      The recruiter's headshot comes from `recruiters.json` (`skill:` paths are in this skill); copy
      it into the run folder before uploading.
    - Every image in a slide is a `/_blob/<id>` the copy or upload returned for **this** deck.
@@ -183,3 +203,8 @@ bash <skill>/scripts/render.sh decks/<run>/content.json        # add --anon for 
 `reference/page-types.md` has the page types and `reference/example/content.json` the shape. The
 build stops on the same rules. Sources go to a `(sources).md` file next to the deck, never into the
 speaker notes.
+
+---
+
+*1.5.0, 27 Oct 2026: logo and headshots gathered in Phase 2 with header-only and image-only
+scrapes, asked for up front and once at Gate 1, never mid-build.*
