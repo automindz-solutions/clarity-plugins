@@ -1,6 +1,6 @@
 # Clarity R2R plugin marketplace
 
-One install that gives every Clarity recruiter the same eleven skills in Claude (Cowork, Desktop or
+One install that gives every Clarity recruiter the same fifteen skills in Claude (Cowork, Desktop or
 Code). It replaces uploading `.skill` files one by one.
 
 ## Install (each person, once)
@@ -25,6 +25,10 @@ The skills then appear when you type `/`:
 | `clarity-deck` | Client deck for a retained search as an editable Claude Slides deck on the Clarity design system, full or anonymised |
 | `clarity-bd` | Net-new BD contacts from eight market signals |
 | `clarity-network` | Chase list from the LinkedIn inbox via Kondo |
+| `clarity-inbox` | Drafts replies to LinkedIn, email and text messages waiting on you, logs booked calls in Loxo |
+| `clarity-day-planner` | Tomorrow's plan on your own Clarity page, built every evening |
+| `clarity-inmail` | Writes the InMail tasks from your Lemlist campaigns into Sales Navigator, you click Send |
+| `clarity-logo` | The real Clarity R2R logo, placed at the top of every branded output |
 | `clarity-house-style` | Brand colours, type and capitalisation rules |
 
 **Loxo or market?** The `-loxo` skills search what Clarity already holds and cost nothing to run.
@@ -41,7 +45,7 @@ Loxo, Hyreflow, Microsoft 365, Lemlist, Notion and Kondo (Kondo needs a plan wit
 .claude-plugin/marketplace.json   # marketplace manifest, one plugin: clarity
 clarity/
 ├── .claude-plugin/plugin.json    # plugin manifest and version
-└── skills/<10 skills>/SKILL.md
+└── skills/<15 skills>/SKILL.md
 ```
 
 ## Updating a skill
