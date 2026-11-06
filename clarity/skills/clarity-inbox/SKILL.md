@@ -3,6 +3,7 @@ name: "clarity-inbox"
 description: "Clarity R2R inbox helper for any recruiter on the team. Drafts replies to every LinkedIn (Kondo), email (Outlook) and text (Loxo) message still waiting on them, drafts chasers for agreed-but-unbooked calls, logs booked calls and shared contact details in Loxo, and (if allowed) sends calendar invites for agreed times - in the person's own voice, never sending messages. Two modes: SETUP (\"set up my inbox\", \"set up clarity inbox\", first-time setup for a new joiner - connects tools, learns their writing style, creates their two daily scheduled tasks) and RUN (used by the scheduled tasks: \"morning\" with chasers, \"midday\" without). Use whenever someone says \"clear my inbox\", \"draft my replies\", \"run my inbox\", \"inbox drafts\", or a scheduled task says to use clarity-inbox."
 ---
 
+
 # Clarity Inbox
 
 Drafts replies for a Clarity R2R recruiter so they can clear LinkedIn, email and texts fast. Works for anyone on the team: everything personal lives in their **MY SETTINGS** block, which sits inside their scheduled tasks.
@@ -116,8 +117,15 @@ Every EMAIL draft ends with the `Email signature (HTML)` from settings, after th
 Calendly `event_types-list_event_type_available_times` for their event type, next 7 days, converted to their time zone. (No Calendly: use free gaps between 9am and 5pm in their Outlook calendar.) Only offer real free slots, and never offer the same slot to two people in one run. Booking link = `Calendly link`.
 
 ### Step 4 - Every message still waiting on them (no time cut-off)
-- **LinkedIn (Kondo):** list_inbox view NEEDS_MY_REPLY, after = 14 days ago, limit 100; page back with `before` = oldest threadActivityAt while more may exist. ALSO view UNREAD (same window) and add any chat not already listed. For EVERY chat: read_chat; if empty or the latest message looks missing, load_chat then read_chat again - never skip a chat because messages weren't loaded. Skip only: chats with a draft newer than the other person's latest message, chats where the person sent the latest message, internal banter (unless a question), pleasantries needing no answer, obvious sales pitches/spam.
-- **Email (Outlook):** first list Drafts (folderName "Drafts", newest first, last 14 days) and note each draft's subject/recipient/conversation. Then Inbox for the last 3 days (page through all), read_resource on real-person emails. Needs a reply if there's no reply from them in Sent Items after the sender's latest message. SKIP if that thread already has a draft (same conversation, or same subject + recipient). Skip newsletters, marketing, bank/finance, calendar accepts/declines, OTP codes, system notifications, spammy form entries, Lemlist test emails. FLAG (don't draft) bounce notices for invites they sent.
+- **LinkedIn (Kondo) - check EVERY chat, not just "needs reply".** Kondo's reply status is often out of date, and some chats sit outside the main inbox. Kondo returns only ~20 chats per call, so ALWAYS page back with `before` = the oldest threadActivityAt returned until nothing new comes back. Build ONE combined, de-duplicated list from ALL of these:
+  (a) view NEEDS_MY_REPLY (after = 14 days ago); (b) view UNREAD (14 days); (c) view AWAITING_REPLY (14 days) - all of them, a new reply is often wrongly listed here; (d) inbox "all" view EXCLUDE_ARCHIVED (after = 3 days ago); (e) inbox "inmail" view EVERYTHING (14 days) - InMails never show in the main inbox; (f) inbox "other" view EVERYTHING (14 days); (g) inbox "archive" (after = 7 days ago) - chats archived without a reply.
+  For EVERY chat: load_chat FIRST (never trust the stored copy or the inbox status), then read_chat (10-15 chats per call). Look at the real newest message by timestamp: if it's from the other person and the user hasn't replied after it, it needs a reply. If a chat won't open after 2 tries, list it by name under URGENT.
+  Skip only: chats with a draft newer than the other person's latest message, chats where the user sent the latest message, internal banter (unless a question), pleasantries needing no answer (e.g. "Welcome", a thumbs-up), obvious mass sales pitches/spam. A personal approach asking the user something directly (e.g. a vendor or founder asking for a coffee) is NOT spam - draft a short polite reply or list it under "Needs your decision".
+- **Email (Outlook):**
+  1. First list Drafts (folderName "Drafts", newest first, last 14 days) and read_resource each one to note its REAL To recipient(s), subject, conversation and when it was created.
+  2. Then Inbox for the last 3 days (page through all), read_resource on real-person emails. Needs a reply if there's no reply from the user in Sent Items after the sender's latest message.
+  3. STRICT duplicate test - only skip as "draft already waiting" if a draft exists that (a) is a reply in the SAME conversation, (b) has THAT sender's email address in To, and (c) was created AFTER their latest message. NEVER skip because of a matching subject line (e.g. "Deck - As Discussed" is reused for many people), a matching name, a forward to someone else (FW:), or a draft addressed to the user themselves. List each such skip in the overview with a link to the draft that caused it.
+  4. Skip newsletters, marketing, bank/finance, calendar accepts/declines, OTP codes, system notifications, spammy form entries, Lemlist test emails. BUT a named supplier or account manager asking the user a direct question (renewals, invoice queries, scheduling) is NOT marketing - draft a short reply, or if it needs their decision (e.g. whether to renew), list it under "Needs your decision". FLAG (don't draft) bounce notices for invites they sent.
 - **Texts (Loxo):** sms_index for the last 3 days; inbound without a later outbound reply needs a reply. If none, say "No texts in Loxo".
 - Note each sender's own time zone where known. If someone proposed a time that's today or already passed → URGENT at the very top.
 - Wants a call: offer 2 real free slots (their time + the other person's time zone if known) and the booking link. Proposed a specific time: check it's free, confirm it (and create the invite - Step 8b).
@@ -126,8 +134,8 @@ Calendly `event_types-list_event_type_available_times` for their event type, nex
 
 ### Step 5 - Chasers (MORNING mode only)
 Find people who asked for / agreed to a call, where the person's latest message offered times or the booking link, they haven't replied since, and there's no meeting with them (Step 2).
-- LinkedIn: Kondo list_inbox view AWAITING_REPLY (last 14 days), read_chat to confirm.
-- Email: Sent Items last 14 days, threads offering times/link with no later reply. Skip threads with a draft waiting.
+- LinkedIn: use the AWAITING_REPLY chats already loaded in Step 4 to confirm the pattern.
+- Email: Sent Items last 14 days, threads offering times/link with no later reply. Skip threads that already have a real chaser/reply draft to that person (strict test from Step 4).
 - One short friendly nudge per person per weekday, worded differently each day, with 2 fresh slots + the link. e.g. "Hey Sam - just floating this back up. Any of these work - Thu 12:30pm or 1pm ET? Or grab a slot here: [link]".
 - After 4 unanswered chasers (or 7 days) stop and list them under "Gone quiet - want to keep chasing?"
 
@@ -145,11 +153,15 @@ For every external person with a call booked (Step 2, or created in Step 8b) not
 - Report each in one line: name, Candidate/Contact, job, activity + date, lists, link https://app.loxo.co/clarity-r2r/people/<id>, ⚠️ on guesses.
 
 ### Step 7 - Contact details shared (automatic)
-In every conversation read in Step 4 (incl. email signatures), look for a personal email or phone the person shared. Find them in Loxo with the Step 6 duplicate checks (create them as in Step 6 if genuinely new). Only ADD details not already there (person_emails_index / person_phones_index; compare phones by digits) - never delete or overwrite. Don't add bounced emails or ones that look wrong - flag instead. Types: personal email (gmail, outlook, yahoo, icloud...) = Personal 80500; company domain = Work 80497; mobile = Mobile 103491; office = Work 103487; unclear = Main 103484. Keep numbers as given, adding country code if obvious.
+In every conversation read in Step 4 (incl. email signatures), look for a personal email or phone the person shared. Find them in Loxo with the Step 6 duplicate checks (create them as in Step 6 if genuinely new). Only ADD details not already there (person_emails_index / person_phones_index; compare phones by digits) - never delete or overwrite. Don't add bounced emails, ones the person later corrected, or ones that look wrong - flag instead. Types: personal email (gmail, outlook, yahoo, icloud...) = Personal 80500; company domain = Work 80497; mobile = Mobile 103491; office = Work 103487; unclear = Main 103484. Keep numbers as given, adding country code if obvious.
 
 ### Step 8 - Save drafts (never send)
 - LinkedIn: set_chat_draft (replaces older draft), then set_chat_label action "add" with their `Kondo draft label`.
-- Email: re-check Drafts for that thread; if a reply draft exists, skip. Else outlook_create_reply_draft on the latest message, bodyType "html", each paragraph in <p>...</p>, ending with their signature.
+- Email: re-check Drafts for that thread with the STRICT test from Step 4; if a real draft to that person exists, skip. Then:
+  - Latest message in the thread is FROM the other person → outlook_create_reply_draft on it.
+  - Latest message is from the user (e.g. a chaser) → do NOT reply (it would address the user). Use outlook_create_draft with to = the other person's email and subject "RE: <original subject>".
+  - Before saving ANY email draft, confirm the To recipient is the external person and NEVER the user's own address.
+  bodyType "html", each paragraph in <p>...</p>, ending with their signature.
 - Texts: write the draft text in the overview only. Use Loxo sms_create only if the person explicitly says "send the texts".
 
 ### Step 8b - Calendar invites (only if `Calendar invites: on`)
@@ -164,11 +176,14 @@ When a real external person has agreed a SPECIFIC date/time in writing, it's fre
 ### Step 9 - Overview (one short message, in sections)
 - **URGENT** - anything time-sensitive, exactly what to do.
 - **Drafts saved - ready to send** - one line each: name, who they are, what the draft says, clickable link (LinkedIn: chatUrl from set_chat_draft; email: Outlook webLink). Waiting 24h+ first, marked "waiting since [day/time]". "(replaced older draft)" where relevant. ⚠️ on any [bracketed] gap. Remind them: LinkedIn drafts are under the yellow "Claude Draft - Ready to Send" label in Kondo; emails are in Outlook Drafts.
+- **Needs your decision** - supplier questions, vendor approaches, anything you weren't sure whether to answer: name, what they want, link.
 - **Chasers saved** (morning) + "Gone quiet - want to keep chasing?"
 - **Archived but not sent**
 - **Invites sent** / "Invites waiting - need email" / "Invites to make"
 - **Loxo updated** - booked calls logged, new people, contact details - one line each with link and ⚠️ on guesses. Plus anything not done and why.
-- One line: "Kondo tidy: X leftover drafts cleared, Y labels removed. Email drafts already waiting: Z skipped."
+- One line: "LinkedIn: checked N chats (incl. InMail/Other/Archive) - all N opened" (or which couldn't be opened).
+- One line: "Kondo tidy: X leftover drafts cleared, Y labels removed. Email drafts already waiting: Z skipped" - name each skipped email with a link to the existing draft.
+- One line: "Arrived while this run was working: [names]" (picked up next run).
 - One line on what else was skipped and why.
 End with: "Want any draft or Loxo update changed? Just tell me which one."
 

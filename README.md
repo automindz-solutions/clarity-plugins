@@ -26,7 +26,7 @@ The skills then appear when you type `/`:
 | `clarity-bd` | Net-new BD contacts from eight market signals |
 | `clarity-network` | Chase list from the LinkedIn inbox via Kondo |
 | `clarity-inbox` | Drafts replies to LinkedIn, email and text messages waiting on you, logs booked calls in Loxo |
-| `clarity-day-planner` | Tomorrow's plan on your own Clarity page, built every evening |
+| `clarity-day-planner` | Today's plan on your own Clarity page, built every weekday at 8:35am |
 | `clarity-inmail` | Writes the InMail tasks from your Lemlist campaigns into Sales Navigator, you click Send |
 | `clarity-logo` | The real Clarity R2R logo, placed at the top of every branded output |
 | `clarity-house-style` | Brand colours, type and capitalisation rules |

@@ -1,17 +1,17 @@
 ---
 name: "clarity-inmail"
-description: "Clarity R2R InMail helper for any recruiter on the team. Takes the manual 'Send InMail' tasks from the person's Lemlist campaigns (which Lemlist can't automate), writes a personal InMail for each person in the recruiter's own voice, and types it into LinkedIn Sales Navigator ready to go - the recruiter just checks and clicks Send. Afterwards it confirms what was sent and ticks the tasks off in Lemlist. Never clicks Send. Two modes: SETUP ('set up my inmails', first time for a new joiner - checks tools, saves settings, creates their morning scheduled task) and RUN ('do my inmails', 'run my inmails', 'prep my inmails', or a scheduled task says to use clarity-inmail). Also DONE ('inmails done', 'I've sent them') to tick off sent tasks."
+description: "Clarity R2R InMail helper for any recruiter on the team. Takes the manual 'Send InMail' tasks from the person's Lemlist campaigns (which Lemlist can't automate), writes a personal InMail for each person in the recruiter's own voice, and types it into LinkedIn Sales Navigator ready to go - the recruiter just checks and clicks Send. Each run first checks Sales Navigator Sent messages and ticks off anything already sent in Lemlist automatically. Never clicks Send. Two modes: SETUP ('set up my inmails', first time for a new joiner - checks tools, saves settings, creates their morning scheduled task) and RUN ('do my inmails', 'run my inmails', 'prep my inmails', or a scheduled task says to use clarity-inmail). Also DONE ('inmails done', 'I've sent them') to tick off sent tasks straight away."
 ---
 
 # Clarity InMail
 
-Lemlist can't send LinkedIn InMails, so those steps sit as manual tasks. This skill does all of that work except the final click: it finds the tasks, writes each InMail, and types it into Sales Navigator. The recruiter checks it and clicks **Send** (about 5 seconds each).
+Lemlist can't send LinkedIn InMails, so those steps sit as manual tasks. This skill does all of that work except the final click: it finds the tasks, writes each InMail, and types it into Sales Navigator. The recruiter checks it and clicks **Send** (about 5 seconds each). Next run, it checks their Sent messages and ticks the sent ones off in Lemlist on its own - no need to report back.
 
 The person is usually non-technical. Keep every message short, plain and friendly. Never mention tool names, IDs or "API".
 
 **Golden rules (always)**
 - **NEVER click Send / Submit in Sales Navigator or LinkedIn.** LinkedIn bans automated sending and the account is the recruiter's livelihood. Type it in, stop, let them send.
-- Never send anything through Lemlist either (no `send_task`). Only tick tasks off after the recruiter confirms they sent them, and only after checking Sales Navigator's Sent folder.
+- Never send anything through Lemlist either (no `send_task`). Only tick tasks off after checking Sales Navigator's Sent folder shows the InMail went.
 - Never name a candidate to a client. These are candidate approaches, so this rarely comes up. If it does, follow the person's voice skill's spec-out rules.
 - Max **15 InMails per run** (or the `Max per run` setting). Sales Navigator credits are limited and a flood of identical InMails looks like spam.
 - Work in the person's time zone.
@@ -65,7 +65,7 @@ MY SETTINGS
 - Notes: (anything personal, e.g. "skip Austria campaign for now")
 ```
 
-**S7. Finish** in 4 short lines: what's set up, when it runs, "Keep Chrome open and logged in to Sales Navigator", and "Want me to do a first run now?" To change anything later: "update my inmail settings" → edit the task's MY SETTINGS with `update_scheduled_task`.
+**S7. Finish** in 4 short lines: what's set up, when it runs, "Keep Chrome open and logged in to Sales Navigator - just send the InMails, I'll tick them off in Lemlist next run", and "Want me to do a first run now?" To change anything later: "update my inmail settings" → edit the task's MY SETTINGS with `update_scheduled_task`.
 
 ---
 
@@ -77,7 +77,16 @@ MY SETTINGS
 
 ## RUN
 
-Read MY SETTINGS. Load tools with ToolSearch: Lemlist (`get_tasks`, `get_campaign_sequences`, `search_campaign_leads`, `update_task`), Claude in Chrome (`tabs_context_mcp`, `tabs_create_mcp`, `navigate`, `find`, `read_page`, `get_page_text`, `computer`, `form_input`), and Loxo `people_index` if connected.
+Read MY SETTINGS. Load tools with ToolSearch: Lemlist (`get_tasks`, `get_campaign_sequences`, `search_campaign_leads`, `update_task`), Claude in Chrome (`tabs_context_mcp`, `tabs_create_mcp`, `navigate`, `find`, `read_page`, `get_page_text`, `computer`, `form_input`, `tabs_close_mcp`), and Loxo `people_index` if connected.
+
+### Step 0 - Tick off what was sent since the last run (automatic)
+Before preparing anything new, check what the recruiter sent since the last run, so they never have to report back.
+- `get_tasks` with assignedTo [their user id], status ["due"], type ["manual"], matching `InMail task titles`. These are the still-open InMail tasks, including any prepared last run.
+- Open Sales Navigator **Sent** messages (https://www.linkedin.com/sales/inbox, filter "Sent") with `get_page_text`, scrolling/loading more until you reach messages older than 7 days.
+- For each open task whose person (match first + last name, and company if shown) has an InMail in Sent dated after the task became due: close it with `update_task` status "done". If Lemlist refuses because it's a manual campaign step, use status "ignored". Nothing is sent by this, the task just closes and the campaign moves on.
+- Anyone not found in Sent stays open and is simply prepared again in this run (Step 4 will spot an existing thread and skip it if they were in fact messaged).
+- Close any leftover Chrome tabs from the last run.
+- Report in the overview: "Ticked off X sent since last run."
 
 ### Step 1 - Get today's InMail tasks
 `get_tasks` with assignedTo [their user id], status ["due"], type ["manual"], sortBy dueDate, sortOrder asc, limit 100 (page if needed). Keep tasks whose title matches `InMail task titles`.
@@ -107,19 +116,23 @@ One Chrome tab per person, so they can work through the tabs.
 If any step fails twice (page layout changed, captcha, login wall), don't fight it. Put the InMail text in the overview for that person so they can paste it, and move on.
 
 ### Step 5 - Overview (one short message)
+- First line: "Ticked off X sent since last run" (from Step 0).
 - **"X InMails ready - check each tab and click Send."**
 - One line each: name, company, campaign, the first line of the message, ✅ typed in / 📋 paste manually (with full text).
 - **Couldn't do**: no LinkedIn URL, already messaged, page wouldn't load.
 - **Waiting**: "Y more due - next run", and "Z waiting in paused campaigns: [campaign names]".
 - Credits left (if Sales Navigator shows it).
-- End with: **"When you've sent them, say 'InMails done' and I'll tick them off in Lemlist."**
+- End with: **"Just send them - I'll check your Sent messages next run and tick them off in Lemlist automatically. (Or say 'InMails done' if you want it done now.)"**
 
 ---
 
-## DONE (tick off sent tasks)
+## DONE (tick off sent tasks now - optional)
+
+Every RUN already does this automatically (Step 0). DONE is only for when they want it done straight away.
 
 1. Open Sales Navigator **Sent** messages (https://www.linkedin.com/sales/inbox, filter "Sent") with `get_page_text`. For each person prepared in this conversation (or due today if this is a new conversation), check an InMail to them appears with today's date.
 2. For each one confirmed sent: `update_task` status "done". If Lemlist refuses because it's a manual campaign step, use `update_task` status "ignored". Nothing is sent by this, the task just closes and the campaign moves on to the next step. Tell them which was used.
 3. Anyone prepared but NOT found in Sent: leave the task open and list them ("Not sent yet: ...").
 4. Close the Chrome tabs this run opened, except any with unsent InMails.
 5. One-line summary: "Ticked off X in Lemlist. Y still to send."
+
